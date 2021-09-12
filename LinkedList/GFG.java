@@ -1,11 +1,12 @@
 package LinkedList;
 
+import java.util.HashMap;
 import java.util.HashSet;
 
 class Node{
     int data;
-    Node next;
-    Node(int a){  data = a; next = null; }
+    Node next,arb;
+    Node(int a){  data = a; next = arb = null; }
 }
 public class GFG {
     public static int getCount(Node head)
