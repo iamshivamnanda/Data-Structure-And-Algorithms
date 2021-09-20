@@ -2,7 +2,6 @@
 package arrays;
 
 import java.util.*;
-import java.lang.*;
 import java.io.*;
 
 class GFG {
