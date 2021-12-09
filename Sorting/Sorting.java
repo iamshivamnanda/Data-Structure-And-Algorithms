@@ -7,7 +7,6 @@ class Myclass implements Comparator<Integer> {
 
     @Override
     public int compare(Integer o1, Integer o2) {
-        // TODO Auto-generated method stub
         return o1%2 - o2%2;
     }
 

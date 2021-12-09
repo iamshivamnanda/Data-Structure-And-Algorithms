@@ -82,7 +82,7 @@ public class BasicArray {
         myarr2[5] = 90;
 
         int n = 6;
-        int cap = myarr2.length;
+        
         // System.out.println("\nBefore Insertion");
         // for (int i = 0; i < n; i++) {
         // System.err.print(myarr2[i] + " ");

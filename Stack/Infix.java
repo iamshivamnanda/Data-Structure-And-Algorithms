@@ -1,5 +1,5 @@
 package Stack;
-import java.lang.reflect.Array;
+
 import java.util.*;
 
 public class Infix {

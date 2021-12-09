@@ -3,11 +3,12 @@ package Graph;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.*;
 import java.util.Queue;
 
-import Stack.Stack;
-import Tree.Tree;
+
 
 public class Graph {
     public ArrayList<ArrayList<Integer>> printGraph(
@@ -178,7 +179,7 @@ public class Graph {
 		}
 		return res;
     }
-
+	//prims algoritham
 	static int spanningTree(int V, ArrayList<ArrayList<ArrayList<Integer>>> adj) 
     {
 		int res = 0;
@@ -396,4 +397,18 @@ public class Graph {
 		);
 		return (bri[c] == d || bri[d] == c)?1:0;
     }
+	public static int sockMerchant(int n, List<Integer> ar) {
+		HashSet<Integer> hSet = new HashSet<>();
+		int count = 0;
+		for (Integer integer : ar) {
+			if(hSet.contains(integer)){
+				hSet.remove(integer);
+				count++;
+			}else{
+				hSet.add(integer);
+			}
+		}
+	return count;
+		}
+		
 }

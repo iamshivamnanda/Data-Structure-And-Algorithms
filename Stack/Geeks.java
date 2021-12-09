@@ -2,6 +2,8 @@ package Stack;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Stack;
 public class Geeks
 {
@@ -166,4 +168,68 @@ public static Stack<Integer> _push(int arr[],int n)
             s.push(arrayList.get(i));
         }
     } 
+    
+    public static String hackerrankInString(String s) {
+        // Write your code here
+        String ha ="hackerrank"; 
+      
+        int index =0;
+
+        for (int i = 0; i < s.length(); i++) {
+            if(index<ha.length() && s.charAt(i) == ha.charAt(index)){
+                index++;
+            }
+        }
+        return (index == ha.length())? "YES":"NO";
+        
+    
+    }
+    public static String pangrams(String str) {
+        boolean[] visited = new boolean[26];
+        String s = str.toLowerCase();
+        for (int i = 0; i < s.length(); i++) {
+            if(Character.isAlphabetic(s.charAt(i))){
+                visited[s.charAt(i)-97] = true;
+            }
+        }
+        for (boolean b : visited) {
+            if(b==false){
+                return "not pangram";
+            }
+        }
+        return "pangram";
+
+    }
+    public static List<String> weightedUniformStrings(String str, List<Integer> queries) {
+        // Write your code here
+        HashSet<Integer> hashSet = new HashSet<>();
+        String s = str.toLowerCase();
+        int res = 0;
+        for (int i = 0; i < s.length();) {
+            if(Character.isAlphabetic(s.charAt(i))){
+                res = s.charAt(i)-96;
+                hashSet.add(res);
+                int j =i+1;
+               while(j<s.length() && s.charAt(i) == s.charAt(j)){
+                   res += s.charAt(j)-96;
+                   hashSet.add(res);
+                   j++;
+               }
+               i = j;
+            }
+        }
+               
+
+        ArrayList<String> list = new ArrayList<>();
+        for (Integer integer : queries) {
+            if(hashSet.contains(integer)){
+                list.add("Yes");
+            }else{
+                list.add("No");
+            }
+        }
+        return list;
+        }
 }
+
+

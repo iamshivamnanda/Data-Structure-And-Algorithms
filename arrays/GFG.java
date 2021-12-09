@@ -44,6 +44,7 @@ class GFG {
             rotateArray(a, N, D);
             printArray(a,N);
 	}
+    in.close();
 	
 }
 }

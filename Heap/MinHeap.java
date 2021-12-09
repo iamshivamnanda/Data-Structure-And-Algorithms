@@ -1,7 +1,7 @@
 package Heap;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+
 import java.util.Collections;
 import java.util.PriorityQueue;
 
@@ -234,7 +234,7 @@ public class  MinHeap {
         for (int i = 0; i < k+1; i++) {
             mheap.add(arr[i]);
         }
-        int index = 0;
+      
         for (int i = k+1; i < arr.length; i++) {
             list.add(mheap.poll());
             // arr[index++] = mheap.poll();

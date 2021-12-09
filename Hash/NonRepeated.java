@@ -11,7 +11,7 @@ public class NonRepeated {
             mHashMap.put(arr[i], mHashMap.getOrDefault(arr[i], 0)+1);
         }
         long l = 0L;
-        for (Map.Entry mEntry : mHashMap.entrySet()) {
+        for (Map.Entry<Integer,Integer> mEntry : mHashMap.entrySet()) {
             if((int)mEntry.getValue()==1){
                 l++;
             }
@@ -89,7 +89,7 @@ public class NonRepeated {
         for (int i = 0; i < n; i++) {
             BHashMap.put(B[i], BHashMap.getOrDefault(B[i], 0)+1);
         }
-        for (Map.Entry mEntry : mHashMap.entrySet()) {
+        for (Map.Entry<Long,Integer> mEntry : mHashMap.entrySet()) {
             if(BHashMap.containsKey(mEntry.getKey())){
                 if(BHashMap.get(mEntry.getKey()) != mEntry.getValue()){
                     return false;

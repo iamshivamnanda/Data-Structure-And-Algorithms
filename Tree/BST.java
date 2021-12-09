@@ -3,7 +3,7 @@ package Tree;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.List;
+
 import java.util.Map;
 import java.util.Queue;
 import java.util.TreeMap;
@@ -263,7 +263,7 @@ public class BST {
         TreeMap<Integer,Integer> map = new TreeMap<>();
         ArrayList<Integer> list = new ArrayList<>();
         verticalSumHelper(root, 0, map);
-        for (Map.Entry sum : map.entrySet()) {
+        for (Map.Entry<Integer,Integer> sum : map.entrySet()) {
             list.add((int) sum.getValue());
         }
         return list;

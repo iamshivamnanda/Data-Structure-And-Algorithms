@@ -220,7 +220,7 @@ public class Loop {
                 simpleNode = simpleNode.next;
                 reverNode = reverNode.next;
             }
-            Node curr = prev;
+           
             prev = null;
             while (slow!=null) {
                 Node next = slow.next;
