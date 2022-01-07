@@ -49,4 +49,24 @@ public class basics {
                     }
                     return out;
                 }
+                public static List<Integer> gradingStudents(List<Integer> grades) {
+                    // Write your code here
+                    List<Integer> res = new ArrayList<Integer>();
+                    for (Integer grade : grades) {
+                        int g = grade;
+                        if(grade>38){ 
+                            int nextmul =5;
+                            while (nextmul<grade) {
+                                nextmul = nextmul+5;
+                            }
+                            System.out.println(nextmul);
+                            if(nextmul-grade<3){
+                                g = nextmul;
+                            }
+                        }
+                        res.add(g);
+                    }
+                    return res;
+                    }
+                
 }
