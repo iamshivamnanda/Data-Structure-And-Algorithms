@@ -68,5 +68,24 @@ public class basics {
                     }
                     return res;
                     }
-                
+                    public static long getWays(int value, List<Long> c) {
+                        // Write your code here
+                        int numberOfCoins = c.size();
+                        long[][] dp= new long[value+1][numberOfCoins+1];
+        for (int i = 0; i <=value; i++) {
+            dp[i][0] =0;
+        } 
+        for (int i = 0; i <=numberOfCoins; i++) {
+            dp[0][i] =1;
+        } 
+        for (int i = 1; i <= value; i++) {
+            for (int j = 1; j <= numberOfCoins; j++) {
+                dp[i][j] = dp[i][j-1];
+                if(c.get(j-1)<=i){
+                    dp[i][j] += dp[(int) (i-c.get(j-1))][j];
+                }
+            }
+        }
+        return dp[value][numberOfCoins];
+        }
 }

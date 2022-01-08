@@ -116,7 +116,64 @@ public class Dp {
         }
         return x+y -memo[x][y];
     }
-    public static void main(String[] args) {
+
+    public long minimumNumberOfCoins(int coins[],int numberOfCoins,int value)
+    {
+       long[][] dp = new long[numberOfCoins+1][value+1];
+       Arrays.fill(dp[0], Integer.MAX_VALUE-1);
+       for (int i = 1; i <= numberOfCoins; i++) {
+           for (int j = 1; j <= value; j++) {
+               if(coins[i-1]<=j){
+                   dp[i][j] = Math.min(1+dp[i][j-coins[i-1]], dp[i-1][j]);
+               }else{
+                   dp[i][j] = dp[i-1][j];
+               }
+           }
+       }
+       return (dp[numberOfCoins][value]==Integer.MAX_VALUE-1)?-1:dp[numberOfCoins][value];
+    }
+
+    public long numberOfWays(int coins[],int numberOfCoins,int value)
+    {
+        int[][] dp= new int[value+1][numberOfCoins+1];
+        for (int i = 0; i <=value; i++) {
+            dp[i][0] =0;
+        } 
+        for (int i = 0; i <=numberOfCoins; i++) {
+            dp[0][i] =1;
+        } 
+        for (int i = 1; i <= value; i++) {
+            for (int j = 1; j <= numberOfCoins; j++) {
+                dp[i][j] = dp[i][j-1];
+                if(coins[j-1]<=i){
+                    dp[i][j] += dp[i-coins[j-1]][j];
+                }
+            }
+        }
+        return dp[value][numberOfCoins];
+    }
+
+    public int editDistance(String s, String t) {
+        // Code here
+        int[][] dp = new int[s.length()+1][t.length()+1];
+        for (int i = 0; i <= s.length(); i++) {
+            dp[i][0] = i;
+        }
+        for (int i = 0; i <= t.length(); i++) {
+            dp[0][i] = i;
+        }
+        for (int i = 1; i <= s.length(); i++) {
+            for (int j = 1; j <= t.length(); j++) {
+                if(s.charAt(i-1) == t.charAt(j-1)){
+                    dp[i][j] = dp[i-1][j-1];
+                }else{
+                    dp[i][j] = 1+ Math.min(Math.min(dp[i-1][j], dp[i][j-1]), dp[i-1][j-1]);
+                }
+            }
+        }
+        return dp[s.length()][t.length()];
+    }
+        public static void main(String[] args) {
         System.out.println(findNthFibonacci(7));
     }
 }

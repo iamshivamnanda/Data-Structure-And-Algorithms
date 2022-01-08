@@ -16,6 +16,8 @@ class Node<K, V> {
     }
 }
 
+
+
 public class MyHash<K, V> {
 
     ArrayList<Node<K, V>> bucket;
