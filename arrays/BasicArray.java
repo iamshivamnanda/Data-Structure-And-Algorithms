@@ -1,6 +1,7 @@
 package arrays;
 
 import java.util.Arrays;
+import java.util.Scanner;
 
 public class BasicArray {
     static int binarySearch(int[] arr, int start, int length, int key) {
@@ -107,5 +108,25 @@ public class BasicArray {
             System.err.print(myarr2[i] + " ");
         }
 
+    }
+
+    public static void reverseArr(){
+        Scanner sc = new Scanner(System.in);
+        int test = sc.nextInt();
+        while (test>0) {
+            int n = sc.nextInt();
+            int[] arr = new int[n];
+            for (int i = 0; i < n; i++) {
+                arr[i] = sc.nextInt();
+            }
+            for (int i = n-1; i >= 0; i--) {
+                System.out.print(arr[i]);
+                System.out.print(" ");
+            }
+            System.out.println();
+
+            test--;
+        }
+        sc.close();
     }
 }

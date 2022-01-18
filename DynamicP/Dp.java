@@ -1,7 +1,11 @@
 package DynamicP;
 
-import java.time.Year;
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.Scanner;
 
 public class Dp {
 
@@ -173,7 +177,125 @@ public class Dp {
         }
         return dp[s.length()][t.length()];
     }
+
+    public static int longestIncreasingSubsequence(int[] arr){
+        int[] lcs = new int[arr.length];
+        lcs[0]=1;
+        for (int i = 1; i < arr.length; i++) {
+            lcs[i]=1;
+            for (int j = 0; j < i; j++) {
+                if(arr[j]<arr[i]){
+                    lcs[i] = Math.max(lcs[i], lcs[j]+1);
+                }
+            }
+        }
+        int maxres = lcs[0];
+        for (int i = 1; i < lcs.length; i++) {
+            if(lcs[i]>maxres){
+                maxres = lcs[i];
+            }
+        }
+        System.out.println("LIS  "+  String.valueOf(maxres));
+        return maxres;
+    }
+    
+    public int minDeletions(int arr[], int n) 
+	{ 
+	   return n-longestIncreasingSubsequence(arr);
+	} 
+    public int maxSumIS(int arr[], int n)  
+	{  
+	    int[] maxSumLis = new int[n];
+	    maxSumLis[0] = arr[0];
+	    for(int i=1;i<n;i++){
+	        maxSumLis[i] = arr[i];
+	        for(int j=0;j<i;j++){
+	            if(arr[j]<arr[i]){
+	                maxSumLis[i] = Math.max(maxSumLis[i],arr[i]+maxSumLis[j]);
+	            }
+	        }
+	    }
+	    int max = maxSumLis[0];
+	    for(int k=0;k<n;k++){
+	        if(maxSumLis[k]>max){
+	            max =maxSumLis[k];
+	        }
+	    }
+	    return max;
+	}  
+    public int LongestBitonicSequence(int[] nums)
+    {
+        int[] lis = new int[nums.length];
+        int[] lds = new int[nums.length];
+
+        lis[0] = 1;
+        for (int i = 1; i < lds.length; i++) {
+            lis[i] =1;
+            for (int j = 0; j < i; j++) {
+                if(nums[j]<nums[i]){
+                    lis[i] = Math.max(lis[i], lis[j]+1);
+                }
+            }
+        }
+
+        int n = nums.length;
+        lds[n-1] = 1;
+
+        for (int i = n-2; i >=0; i--) {
+            lds[i] =1;
+            for (int j = n-1; j >i; j--) {
+                if(nums[j]<nums[i]){
+                    lds[i] = Math.max(lds[i], 1+lds[j]);
+                }
+            }
+        }
+
+        int max = lis[0]+lds[0] -1;
+        for (int i = 1; i < lds.length; i++) {
+            if(max<lis[i]+lds[i]-1){
+                max = lis[i]+lds[i]-1;
+            }
+        }
+        return max;
+    }
+
+    public static int maxSumBS(int nums[], int n)
+    {
+        int[] lis = new int[nums.length];
+        int[] lds = new int[nums.length];
+
+        lis[0] = nums[0];
+        for (int i = 1; i < lds.length; i++) {
+            lis[i] =nums[i];
+            for (int j = 0; j < i; j++) {
+                if(nums[j]<nums[i]){
+                    lis[i] = Math.max(lis[i], lis[j]+nums[i]);
+                }
+            }
+        }
+
+       
+        lds[n-1] = nums[n-1];
+
+        for (int i = n-2; i >=0; i--) {
+            lds[i] =nums[i];
+            for (int j = n-1; j >i; j--) {
+                if(nums[j]<nums[i]){
+                    lds[i] = Math.max(lds[i], nums[i]+lds[j]);
+                }
+            }
+        }
+
+        int max = lis[0]+lds[0] -nums[0];
+        for (int i = 1; i < lds.length; i++) {
+            if(max<lis[i]+lds[i]-nums[i]){
+                max = lis[i]+lds[i]-nums[i];
+            }
+        }
+        return max;
+    }
         public static void main(String[] args) {
         System.out.println(findNthFibonacci(7));
+       
     }
 }
