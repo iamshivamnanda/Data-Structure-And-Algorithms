@@ -1,4 +1,4 @@
-package BitMagic;
+ package BitMagic;
 
 public class SetKthBit {
     static int setKthBit(int N,int K){

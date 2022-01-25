@@ -1,6 +1,6 @@
 package Maths;
 
-public class AbsoluteValue {
+class Absolute{
     static int absolute(int I) {
        
         if(I == 0){
@@ -13,8 +13,12 @@ public class AbsoluteValue {
             return ( I * -1);
         }
     }
+}
+
+public class AbsoluteValue {
+    
 
     public static void main(String[] args) {
-        System.out.println(absolute(-9));
+        System.out.println(Absolute.absolute(-9));
     }
 }

@@ -327,7 +327,20 @@ public class Dp {
         return dp[arr.length-1] == Integer.MAX_VALUE ? -1 :dp[arr.length-1];
     }
         public static void main(String[] args) {
-        System.out.println(findNthFibonacci(7));
+            BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+            try {
+                String line = br.readLine();
+                int t = Integer.parseInt(line);
+                for (int i = 0; i <= t; i++) {
+                    System.out.println(i);
+                }
+                // System.out.println(line);
+                br.close();
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        // System.out.println(findNthFibonacci(7));
        
     }
 }

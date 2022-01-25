@@ -88,4 +88,76 @@ public class basics {
         }
         return dp[value][numberOfCoins];
         }
+
+
+        // Dynamic Array 
+        public static List<Integer> dynamicArray(int n, List<List<Integer>> queries) {
+            // Write your code here
+            List<Integer> res = new ArrayList<Integer>();
+            ArrayList<ArrayList<Integer>> arr = new ArrayList<ArrayList<Integer>>();
+            for (int i = 0; i < n; i++) {
+                arr.add(new ArrayList<Integer>());
+            }
+
+            int lastAnswer = 0;
+            for (List<Integer> list : queries) {
+                int type = list.get(0);
+                int x = list.get(1);
+                int y = list.get(2);
+                if(type == 1){
+                    int idx = ((x^lastAnswer)%n);
+                    arr.get(idx).add(y);
+                }else{
+                    int idx = ((x^lastAnswer)%n);
+                    lastAnswer = arr.get(idx).get(y%arr.get(idx).size());
+                    res.add(lastAnswer);
+                }
+            }
+            return res;
+            }
+            //leftRotate
+            public static List<Integer> rotateLeft(int d, List<Integer> arr) {
+                List<Integer> res = new ArrayList<Integer>();
+
+                for (int i = d; i < arr.size(); i++) {
+                    res.add(arr.get(i));
+                }
+            for (int i = 0; i < d; i++) {
+                res.add(arr.get(i));
+            }
+            return res;
+                }
+
+
+            public static List<Integer> matchingStrings(List<String> strings, List<String> queries) {
+                   List<Integer> res = new ArrayList<Integer>();
+                    for (String query : queries) {
+                        int match = 0;
+                        for (String string : strings) {
+                            if(string.equals(query)){
+                                match++;
+                            }
+                        }
+                        res.add(match);
+                    }
+                   return res;
+                    }
+
+    public static long arrayManipulation(int n, List<List<Integer>> queries) {
+    // Write your code here
+        long arr[] = new long[n];
+        long max =0;
+        for (List<Integer> list : queries) {
+            int a = list.get(0);
+            int b = list.get(1);
+            int k = list.get(2);
+            for (int i = a; i <=b && i<n; i++) {
+                arr[i-1] += k;
+                if(arr[i-1]>max){
+                    max = arr[i-1];
+                }
+            }
+        }
+        return max;
+    }
 }
