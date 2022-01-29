@@ -74,12 +74,40 @@ public class basic {
     }
 
     static int knapSack(int W, int wt[], int val[], int n) {
-        if(n==0 || W ==0){return 0;}
+        if (n == 0 || W == 0) {
+            return 0;
+        }
         if (wt[n - 1] > W) {
             return knapSack(W, wt, val, n - 1);
         } else {
             return Math.max(val[n - 1] + knapSack(W - wt[n - 1], wt, val, n - 1), knapSack(W, wt, val, n - 1));
         }
+    }
+
+    // Optimal Strategy For Game SOl 1
+    static int Optimal_Strategy_Util(int[] arr, int i, int j, int sum) {
+        if (j == i + 1) {
+            return Math.max(arr[i], arr[j]);
+        }
+        return Math.max(sum - Optimal_Strategy_Util(arr, i + 1, j, sum - arr[i]),
+                sum - Optimal_Strategy_Util(arr, i, j - 1, sum - arr[j]));
+    }
+
+    static int main_Optimal_Strategy(int[] arr) {
+        int sum = 0;
+        for (int i = 0; i < arr.length; i++) {
+            sum += arr[i];
+        }
+        return Optimal_Strategy_Util(arr, 0, arr.length - 1, sum);
+    }
+
+    // Optimal Strategy For Game SOl 2
+    static int Optimal_Strategy(int[] arr, int i, int j) {
+        if (j == i + 1) {
+            return Math.max(arr[i], arr[j]);
+        }
+        return Math.max(arr[i] + Math.min(Optimal_Strategy(arr, i + 2, j), Optimal_Strategy(arr, i + 1, j - 1)),
+                arr[j] + Math.min(Optimal_Strategy(arr, i + 1, j - 1), Optimal_Strategy(arr, i, j - 2)));
     }
 
     public static void main(String[] args) {
