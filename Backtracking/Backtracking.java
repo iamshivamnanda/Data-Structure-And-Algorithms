@@ -1,6 +1,5 @@
 package Backtracking;
 
-import java.lang.reflect.Array;
 import java.util.Arrays;
 
 
@@ -206,9 +205,9 @@ public class Backtracking {
                     String st = new String(ar);
                     
                     //if current number is more than maximum so far
-                    if (r.max.compareTo(st) < 0)
+                    if (Res.max.compareTo(st) < 0)
                     {
-                        r.max = st;
+                        Res.max = st;
                     }
                     //calling recursive function to set the next digit.
                     findMaximumNumUtil(ar, k - 1, r);
@@ -226,10 +225,10 @@ public class Backtracking {
     public static String findMaximumNum(String str, int k)
     {
         Res r = new Res();
-        r.max = str;
+        Res.max = str;
         findMaximumNumUtil(str.toCharArray(), k, r);
         //returning the result.
-        return r.max;
+        return Res.max;
     }
 
     public static void main(String[] args) {

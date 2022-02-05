@@ -1,11 +1,8 @@
 package DynamicP;
 
-import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
-import java.util.Scanner;
 
 public class Dp {
 
@@ -373,7 +370,6 @@ public class Dp {
             // System.out.println(line);
             br.close();
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
         // System.out.println(findNthFibonacci(7));

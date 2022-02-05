@@ -1,6 +1,5 @@
 package HACKERRANK;
 
-import java.util.List;
 import java.util.Scanner;
 
 class Node{

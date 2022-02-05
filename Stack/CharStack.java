@@ -64,7 +64,6 @@ public static void main(String[] args) {
 
     newStack.printStack();
    
-
     for (char string : mString2) {
         System.out.print(
             newStack.Pop()
