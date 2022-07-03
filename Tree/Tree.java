@@ -142,34 +142,37 @@ public class Tree {
     ArrayList<Integer> findSpiral(Node root) 
     {
         ArrayList<Integer> list = new ArrayList<>();
-        ArrayDeque<Node> deque = new ArrayDeque<>();
-        Stack<Node> stack = new Stack<>();
-        deque.add(root);
-        boolean reverse = false;
-        while(deque.isEmpty() == false){
-            int count = deque.size();
-            for (int i = 0; i < count; i++) {
-                Node curNode = deque.remove();
-                if(reverse){
-                    stack.push(curNode);
+        if(root == null){
+            return list;
+        }
+        ArrayDeque<Node> q = new ArrayDeque<>();
+        Stack<Node> stack =  new Stack<>();
+        boolean flag = true;
+        q.add(root);
+        while(!q.isEmpty()){
+            int size = q.size();
+            for(int i=0;i<size;i++){
+                Node n = q.remove();
+                if(flag){
+                    stack.push(n);
                 }else{
-                    list.add(curNode.data);
+                    list.add(n.data);
                 }
-                if(curNode.left !=null){
-                    deque.add(curNode.left);
+                if(n.left !=null){
+                    q.add(n.left);
                 }
-                if(curNode.right !=null){
-                    deque.add(curNode.right);
-                }
-                if (reverse){
-                while (!stack.isEmpty()) {
-                    list.add(stack.pop().data);
+                if(n.right !=null){
+                    q.add(n.right);
                 }
             }
+            if(flag){
+                    while(!stack.isEmpty()){
+                        list.add(stack.pop().data);
+                    }
+                }
+            flag = !flag;
         }
-        reverse = !reverse;  
-    }
-    return list;
+        return list;
         
     }
     ArrayList<Integer> findSpiral2(Node root) 
@@ -204,6 +207,7 @@ public class Tree {
         }
         return Math.min(node.data, Math.min(minValue(node.left), minValue(node.right)));
     }
+    
     int getMaxWidth(Node root) {
         int size = 1;
         ArrayDeque<Node> arrayDeque = new ArrayDeque<>();
@@ -544,6 +548,8 @@ ArrayList<Integer> inOrderIterative(Node root)
         }
         return arrayList;
     }
+
+    
 }
   
 

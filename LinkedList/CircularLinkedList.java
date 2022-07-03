@@ -79,14 +79,14 @@ public class CircularLinkedList {
     }
 
     public static void main(String[] args) {
-        LinkedList mLinkedList = new LinkedList();
-        mLinkedList.prepend(5);
-        mLinkedList.prepend(15);
-        mLinkedList.prepend(20);
-        // mLinkedList.append(50);
-        System.out.println(mLinkedList.tail.next);
+        // LinkedList mLinkedList = new LinkedList();
+        // mLinkedList.prepend(5);
+        // mLinkedList.prepend(15);
+        // mLinkedList.prepend(20);
+        // // mLinkedList.append(50);
+        // System.out.println(mLinkedList.tail.next);
 
-        mLinkedList.printList();
+        // mLinkedList.printList();
 
         // mLinkedList.prepend(100);
         // mLinkedList.printList();
@@ -97,5 +97,8 @@ public class CircularLinkedList {
 
         // mLinkedList.deleteHead();
         // mLinkedList.printList();
+
+
+    
     }
 }

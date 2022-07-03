@@ -98,6 +98,21 @@ public class Dp {
         }
         return memo[x][y];
     }
+    public int countNumbersWithUniqueDigits(int n) {
+        
+        if(n==0) return 1;
+        int []dp = new int[n+1];
+        
+        dp[1]=10;
+        int prod =9;
+        
+        for(int i=2;i<=n;i++){
+            dp[i]=prod*(11-i);
+            prod*=(11-i);
+        }
+        
+        return dp[n];
+    }
 
     public static int shortestCommonSupersequence(String s1, String s2, int x, int y) {
         // Your code here
@@ -343,10 +358,11 @@ public class Dp {
         }
         return dp[n][W];
     }
-    //Optimal Strategy For A Game
+
+    // Optimal Strategy For A Game
     static long countMaximum(int arr[], int n) {
         long[][] dp = new long[n][n];
-        for (int i = 0; i < n-1; i++) {
+        for (int i = 0; i < n - 1; i++) {
             dp[i][i + 1] = Math.max(arr[i], arr[i + 1]);
         }
         for (int gap = 3; gap < n; gap += 2) {
@@ -356,7 +372,47 @@ public class Dp {
                         arr[j] + Math.min(dp[i + 1][j - 1], dp[i][j - 2]));
             }
         }
-        return dp[0][n-1];
+        return dp[0][n - 1];
+    }
+
+    // Function to find minimum number of attempts needed in
+    // order to find the critical floor.
+
+    // static int eggDrop(int n, int k) {
+    //     if (n == 1) {
+    //         return k;
+    //     }
+    //     if (k == 1) {
+    //         return 1;
+    //     }
+    //     if (k == 0) {
+    //         return 0;
+    //     }
+    //     int res = Integer.MAX_VALUE;
+    //     for (int i = 1; i <= k; i++) {
+    //         res = Math.min(res, Math.max(eggDrop(n - 1, k - 1), eggDrop(n, k - i)));
+    //     }
+    //     return res + 1;
+    // }
+
+    static int eggDrop(int n, int k) {
+        int[][] dp = new int[k + 1][n + 1];
+        for (int i = 0; i <= n; i++) {
+            dp[0][i] = 0;
+            dp[1][i] = 1;
+        }
+        for (int i = 1; i <= k; i++) {
+            dp[i][1] = i;
+        }
+        for (int i = 2; i <= k; i++) {
+            for (int j = 2; j <= n; j++) {
+                dp[i][j] = Integer.MAX_VALUE;
+                for (int x = 1; x <= i; x++) {
+                    dp[i][j] = Math.min(dp[i][j], 1 + Math.max(dp[x - 1][j - 1], dp[i - x][j]));
+                }
+            }
+        }
+        return dp[k][n];
     }
 
     public static void main(String[] args) {

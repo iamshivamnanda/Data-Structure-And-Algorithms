@@ -1,6 +1,6 @@
 package Sorting;
 
-import java.util.Arrays;
+
 
 public class Partition {
     public static void naive_partition(int arr[], int l, int h, int p) {
@@ -63,15 +63,20 @@ public class Partition {
         }
     }
 
-    public static void main(String[] args) {
-        // int arr[] = new int[]{5,13,6,9,12,11,8};
+    // public static void main(String[] args) {
+    //     // int arr[] = new int[]{5,13,6,9,12,11,8};
 
-        // int n = arr.length;
-        // lomuto_partition(arr,0,n-1,4);
-        int arr[] = new int[] { 5, 3, 8, 4, 2, 7, 1, 10 };
+    //     // int n = arr.length;
+    //     // lomuto_partition(arr,0,n-1,4);
+    //     int arr[] = new int[] { 5, 3, 8, 4, 2, 7, 1, 10 };
 
-        int n = arr.length;
-        System.out.println( hoare_partition(arr, 0, n - 1));
-        System.out.println(Arrays.toString(arr));
-    }
+    //     int n = arr.length;
+    //     System.out.println( hoare_partition(arr, 0, n - 1));
+    //     System.out.println(Arrays.toString(arr));
+    // }
+    
+   
+    
+	
+	
 }

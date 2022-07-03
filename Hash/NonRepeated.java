@@ -129,4 +129,23 @@ public class NonRepeated {
         
         
     }
+    int maxLen(int arr[], int n)
+    {
+        HashMap<Integer,Integer> hMap = new HashMap<>();
+        int res = 0;
+        int prevSum = 0;
+        for(int i=0;i<n;i++){
+            prevSum+= arr[i];
+            if(prevSum ==0){
+                res = i+1;
+            }
+            if(!hMap.containsKey(prevSum)){
+                hMap.put(prevSum,i+1);
+            }else{
+                res = Math.max(res,i-hMap.get(i)+1);
+            }
+        }
+        return res;
+    }
+
 }

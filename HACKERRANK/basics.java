@@ -145,20 +145,139 @@ public class basics {
 
     public static long arrayManipulation(int n, List<List<Integer>> queries) {
     // Write your code here
-        long arr[] = new long[n];
-        long max =0;
-        for (List<Integer> list : queries) {
-            int a = list.get(0);
-            int b = list.get(1);
-            int k = list.get(2);
-            for (int i = a; i <=b && i<n; i++) {
-                arr[i-1] += k;
-                if(arr[i-1]>max){
-                    max = arr[i-1];
+
+    long arr[] = new long[n+2];
+    for(List<Integer> lis : queries){
+        int a = lis.get(0);
+        int b = lis.get(1);
+        int k = lis.get(2);
+        arr[a] += k;
+        arr[b+1] -= k;
+    }
+    long maxval =0;
+    long intterval=0;
+    for(long l:arr){
+        intterval += l;
+        if(intterval>maxval){
+            maxval = intterval;
+        }
+    }
+    
+    
+    return maxval;
+    }
+
+// watch minimum swaps video
+public static void minswaps(List<Integer> q) {
+HashMap<Integer,Integer> map = new HashMap<>();
+for (int i = 0; i <q.size(); i++) {
+    map.put(q.get(i), i);
+}
+
+q.sort(new Comparator<Integer>() {
+
+    @Override
+    public int compare(Integer o1, Integer o2) {
+
+        if(o1>o2){
+            return -1;
+        }else if(o1 == o2){
+            return 0;
+        }else{
+            return 1;
+        }
+    }
+    
+});
+
+boolean visited[] = new boolean[q.size()];
+Arrays.fill(visited, false);
+int ans = 0;
+for (int i = 0; i < q.size(); i++) {
+    if(visited[i] || map.get(q.get(i)) == i){
+        continue;
+    }
+    int j =i;
+    int cycle_size = 0;
+    while(!visited[j]){
+        visited[j] = true;
+        j = map.get(q.get(j));
+        cycle_size++;
+    }
+    if(cycle_size>0){
+        ans = (cycle_size -1);
+    }
+}
+System.out.println(ans);
+}
+
+public static void minimumBribes(List<Integer> q) {
+    // Write your code here
+        int i=0;
+        int bribes=0;
+        int n = q.size();
+        boolean chaoetic  = false;
+        HashMap<Integer,Integer> map = new HashMap<>();
+        while (i<n) {
+            if(q.get(i) != i+1){
+                int temp = q.get(i);
+                q.set(i, q.get(i+1));
+                q.set(i+1, temp);
+                bribes++;
+                if(map.containsKey(temp)){
+                    int val = map.get(temp);
+                    map.replace(temp, val+1);
+                    if(val+1 >2){
+                        System.out.println(map.toString());
+                        chaoetic = true;
+                        break;
+                    }
+                }else{
+                    map.put(temp, 1);
                 }
+            }else{
+                i++;
             }
         }
-        return max;
+        if(chaoetic){
+            System.out.println("Too chaotic");
+        }else{
+            System.out.println(bribes);
+        }
     }
+
+static int minimumSwaps(int[] arr) {
+    int i =0;
+    int count=0;
+    int temp;
+    int  n = arr.length;
+    while(i<n){
+        if(arr[i] != i+1){
+            temp = arr[i];
+            arr[i] = arr[temp-1];
+            arr[temp-1]=temp;
+            count++;
+        }
+        else{
+            i++;
+        }
+    }
+    return count;
+}
+
+    public static List<Integer> rotLeft(List<Integer> a, int d) {
+        ArrayList<Integer> list  = new ArrayList<>();
+
+        for (int i = d; i < a.size(); i++) {
+            list.add(a.get(i));
+        }
+
+        for (int i = 0; i < d; i++) {
+            list.add(a.get(i));
+        }
+
+        return list;
+    
+        }
    
 }
