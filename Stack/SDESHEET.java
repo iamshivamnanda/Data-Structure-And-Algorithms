@@ -242,7 +242,7 @@ public class SDESHEET {
         if (pivot == -1)
             return binarySearch(nums, 0, nums.length - 1, target);
 
-        int res = binarySearch(nums, 0, pivot-1, target);
+        int res = binarySearch(nums, 0, pivot - 1, target);
         if (res != -1)
             return res;
         return binarySearch(nums, pivot, nums.length - 1, target);
@@ -261,32 +261,84 @@ public class SDESHEET {
         return -1;
     }
 
-    public int maxProduct(int[] nums) {
-        int maxRes = nums[0];
-        int res = nums[0];
+    public static int maxProduct(int[] nums) {
+        int max = nums[0];
+        int max_prod = nums[0];
+        int min_prod = nums[0];
         for (int i = 1; i < nums.length; i++) {
-            res *= nums[i];
-            maxRes = Math.max(maxRes, res);
-            if(res==0){
-                res = nums[i];
-            }
+            int temp = Math.max(Math.max(nums[i], nums[i] * max_prod), nums[i] * min_prod);
+            min_prod = Math.min(Math.min(nums[i], nums[i] * max_prod), nums[i] * min_prod);
+            max_prod = temp;
+            max = Math.max(max, max_prod);
         }
-        maxRes = Math.max(maxRes, res);
-        return maxRes;        
+        return max;
     }
 
+    public static List<List<Integer>> threeSum(int[] nums) {
+        List<List<Integer>> res = new ArrayList<>();
+        HashMap<Integer, Integer> hMap = new HashMap<>();
+        for (int i = 0; i < nums.length; i++) {
+            hMap.put(nums[i], i);
+        }
+
+        System.out.println(hMap.toString());
+        for (int i = 0; i < nums.length - 1; i++) {
+            for (int j = i + 1; j < nums.length; j++) {
+                int val = nums[i] + nums[j];
+                if (hMap.containsKey(0 - val)) {
+                    int k = hMap.get(0 - val);
+                    if (i != j && i != k && j != k) {
+                        Boolean contains = false;
+                        List<Integer> list = new ArrayList<>();
+                        list.add(nums[i]);
+                        list.add(nums[j]);
+                        list.add(nums[k]);
+                        for (List<Integer> li : res) {
+                            if (li.containsAll(list)) {
+                                contains = true;
+                                break;
+                            }
+                        }
+                        if (!contains) {
+                            res.add(list);
+                        }
+                    }
+                }
+            }
+        }
+
+        return res;
+    }
+
+    public static int maxArea(int[] height) {
+        int maxArea = 0;
+        int low = 0, high = height.length - 1;
+        while (low < high) {
+            int h = Math.min(height[low], height[high]);
+            int area = h * (high - low);
+            maxArea = Math.max(area, maxArea);
+
+            if (height[low] <= height[high]) {
+                low++;
+            } else {
+                high--;
+            }
+        }
+        return maxArea;
+    }
 
     public static void main(String[] args) {
-        int nums[] = { 4, 5, 6, 7, 0, 1, 2 };
+        int nums[] = { 1, 8, 6, 2, 5, 4, 8, 3, 7 };
         // nextPermutation(nums);
         // int res = maxProfit(nums);
         // int res = findKthLargest(nums, 4);
         // int res[] = productExceptSelf(nums);
         // int res = findMin(nums);
-        int res = search(nums, 3);
-
-        System.out.println("RESULT " + res);
-
+        // int res = search(nums, 3);
+        // List<List<Integer>> list = threeSum(nums);
+        // System.out.println(list.toString());
+        // System.out.println("RESULT " + res);
+        System.out.println(maxArea(nums));
         // System.out.println(Arrays.toString(res));
     }
 }

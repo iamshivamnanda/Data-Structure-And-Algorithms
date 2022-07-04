@@ -45,6 +45,23 @@ public class StringsSDEsheet {
         return true;
     }
 
+    public String removeConsecutiveCharacter(String S){
+        String res = "";
+        res += S.charAt(0);
+        int i=1;
+        int j=0;
+        while(i<S.length()){
+            if(S.charAt(i) == res.charAt(j)){
+                i++;
+                continue;
+            }
+            res += S.charAt(i);
+            i++;
+            j++;
+        }
+        return res;
+    }
+
     public static void main(String[] args) {
         String string = "A man, a plan, a canal: Panama";
         System.out.println(isPalindrome(string));
