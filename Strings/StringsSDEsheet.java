@@ -1,5 +1,6 @@
 package Strings;
 
+import java.util.ArrayDeque;
 import java.util.Arrays;
 
 public class StringsSDEsheet {
@@ -27,31 +28,31 @@ public class StringsSDEsheet {
     }
 
     public static boolean isAnagram(String s, String t) {
-        if(s.length() != t.length())
+        if (s.length() != t.length())
             return false;
         int arr[] = new int[26];
 
         for (int i = 0; i < s.length(); i++) {
-            arr[s.charAt(i)-97]++;
+            arr[s.charAt(i) - 97]++;
         }
         for (int i = 0; i < t.length(); i++) {
-            arr[t.charAt(i)-97]--;
+            arr[t.charAt(i) - 97]--;
         }
 
         for (int i : arr) {
-            if(i != 0)
+            if (i != 0)
                 return false;
         }
         return true;
     }
 
-    public String removeConsecutiveCharacter(String S){
+    public String removeConsecutiveCharacter(String S) {
         String res = "";
         res += S.charAt(0);
-        int i=1;
-        int j=0;
-        while(i<S.length()){
-            if(S.charAt(i) == res.charAt(j)){
+        int i = 1;
+        int j = 0;
+        while (i < S.length()) {
+            if (S.charAt(i) == res.charAt(j)) {
                 i++;
                 continue;
             }
@@ -62,8 +63,72 @@ public class StringsSDEsheet {
         return res;
     }
 
+    public static boolean isValidUtil(char c) {
+        if (c == '(' || c == '[' || c == '{') {
+            return true;
+        }
+        return false;
+    }
+    private static char isValidUtil2(char c) {
+        switch (c) {
+            case ')':
+                return '(';
+            case ']':
+                return '[';
+            case '}':
+                return '{';
+            default:
+                return '*';
+        }
+    }
+
+    public static boolean isValid(String s) {
+        ArrayDeque<Character> stack = new ArrayDeque<>();
+
+        for (int i = 0; i < s.length(); i++) {
+            if(s.charAt(i)==' ')
+                continue;
+            char c = s.charAt(i);
+                if(isValidUtil(c)){
+                    stack.push(c);
+                }else{
+                    if(!stack.isEmpty() && isValidUtil2(c) == stack.peek()){
+                        stack.pop();
+                    }else{
+                        stack.push(c);
+                    }
+                }
+        }
+        if(!stack.isEmpty())
+            return false;
+        return true;
+    }
+
+    public static String longestCommanPrefixUtil(String str1, String str2) {
+        String res ="";
+        for (int i = 0; i < Math.min(str1.length(), str2.length()); i++) {
+            if(str1.charAt(i) !=  str2.charAt(i)){
+                break;
+            }
+            res += str1.charAt(i);
+        }
+        return res;
+    }
+
+    public static String longestCommonPrefix(String[] strs) {
+        String res  =  strs[0];
+        for (int i = 1; i < strs.length; i++) {
+                res = longestCommanPrefixUtil(res, strs[i]);
+        }
+        return res;
+    }
+
     public static void main(String[] args) {
         String string = "A man, a plan, a canal: Panama";
-        System.out.println(isPalindrome(string));
+        String string2 = "()";
+        String[] strs = {"flower","flow","flight"};
+        System.out.println(longestCommonPrefix(strs));
+        // System.out.println(isValid(string2));
+        // System.out.println(isPalindrome(string));
     }
 }
