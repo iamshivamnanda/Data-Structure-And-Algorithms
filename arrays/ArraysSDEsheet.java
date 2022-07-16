@@ -28,21 +28,20 @@ public class ArraysSDEsheet {
         return res;
     }
 
-    public int[][] overlappedInterval(int[][] Intervals)
-    {
-        Arrays.sort(Intervals, (a,b)-> a[0]-b[0]);
+    public int[][] overlappedInterval(int[][] Intervals) {
+        Arrays.sort(Intervals, (a, b) -> a[0] - b[0]);
         ArrayDeque<int[]> stack = new ArrayDeque<>();
         stack.push(Intervals[0]);
         for (int i = 1; i < Intervals.length; i++) {
-            if(stack.peek()[1]>=Intervals[i][0]){
-                stack.peek()[1]=Intervals[i][1];
-            }else{
+            if (stack.peek()[1] >= Intervals[i][0]) {
+                stack.peek()[1] = Intervals[i][1];
+            } else {
                 stack.push(Intervals[i]);
             }
         }
 
         int res[][] = new int[stack.size()][2];
-        int i=stack.size()-1;
+        int i = stack.size() - 1;
         while (!stack.isEmpty()) {
             res[i] = stack.poll();
             i--;
@@ -51,16 +50,42 @@ public class ArraysSDEsheet {
     }
 
     public List<Integer> findDuplicates(int[] nums) {
-        List<Integer> res =  new ArrayList<>();
+        List<Integer> res = new ArrayList<>();
         HashSet<Integer> hSet = new HashSet<>();
         for (int integer : nums) {
-            if(hSet.contains(integer)){
+            if (hSet.contains(integer)) {
                 res.add(integer);
                 continue;
             }
             hSet.add(integer);
         }
         return res;
+    }
+
+    public static int longSubarrWthSumDivByK(int a[], int n, int k) {
+        HashMap<Integer, Integer> hMap = new HashMap<>();
+
+        int[] mod_arr = new int[n];
+
+        int maxLen = 0;
+        int currSum = 0;
+
+        for (int i = 0; i < a.length; i++) {
+            currSum += a[i];
+            mod_arr[i] = ((currSum % k) + k) % k;
+
+            if (mod_arr[i] == 0) {
+                maxLen = i + 1;
+            } else if (hMap.containsKey(mod_arr[i])) {
+
+                if (maxLen < i - hMap.get(mod_arr[i]))
+                    maxLen = i - hMap.get(mod_arr[i]);
+
+            } else {
+                hMap.put(mod_arr[i], i);
+            }
+        }
+        return maxLen;
     }
 
     public static void main(String[] args) {
