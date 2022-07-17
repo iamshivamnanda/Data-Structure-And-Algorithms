@@ -3,9 +3,21 @@ package arrays;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+
+class Query {
+    int L;
+    int R;
+
+    Query(int L, int R) {
+        this.L = L;
+        this.R = R;
+    }
+}
 
 public class ArraysSDEsheet {
     public int[] twoSum(int[] nums, int target) {
@@ -88,7 +100,61 @@ public class ArraysSDEsheet {
         return maxLen;
     }
 
-    public static void main(String[] args) {
+    public static void queryResults(int a[], int n, ArrayList<Query> q, int m) {
+        int block = (int) Math.sqrt(n);
 
+        Collections.sort(q, new Comparator<Query>() {
+
+            @Override
+            public int compare(Query o1, Query o2) {
+                if (o1.L / block != o2.L / block) {
+                    return (o1.L < o2.L) ? -1 : 1;
+                }
+
+                return (o2.R < o2.R) ? -1 : 1;
+            }
+
+        });
+
+        int currL = 0, currR = 0;
+        int currSum = 0;
+
+        for (int i = 0; i < m; i++) {
+            int L = q.get(i).L;
+            int R = q.get(i).R;
+
+            while (currL < L) {
+                currSum -= a[currL];
+                currL++;
+            }
+
+            while (currL > L) {
+                currSum += a[currL - 1];
+                currL--;
+            }
+
+            while (currR <= R) {
+                currSum += a[currR];
+                currR++;
+            }
+
+            while (currR > R + 1) {
+                currSum -= a[currR - 1];
+                currR--;
+            }
+
+            System.out.printf("Sum Of Elements from range %d to %d  is %d\n", L, R, currSum);
+        }
+
+    }
+
+    public static void main(String[] args) {
+        ArrayList<Query> q = new ArrayList<Query>();
+        q.add(new Query(0, 4));
+        q.add(new Query(1, 3));
+        q.add(new Query(2, 4));
+
+        int a[] = { 1, 1, 2, 1, 3, 4, 5, 2, 8 };
+        queryResults(a, a.length, q, q.size());
     }
 }
