@@ -133,8 +133,8 @@ public class StringsSDEsheet {
         for (int i = 0; i < s.length(); i++) {
             char ch = s.charAt(i);
             if (hMap.containsKey(ch)) {
-                int newStart = hMap.get(ch)+1;
-                if(newStart>start){
+                int newStart = hMap.get(ch) + 1;
+                if (newStart > start) {
                     start = newStart;
                 }
                 hMap.replace(ch, i);
@@ -148,7 +148,25 @@ public class StringsSDEsheet {
     }
 
     public int characterReplacement(String s, int k) {
-      
+        // AABABBA k = 1
+        char c = '$';
+        int j = k;
+        int MaxLen = 1;
+        int prevIndex = 0;
+        for (int i = 1; i < s.length(); i++) {
+            if (s.charAt(i) != s.charAt(i - 1)) {
+                if (j > 0 && (c == '$' || s.charAt(i) == c)) {
+                    c = s.charAt(i);
+                    j--;
+                } else {
+                    j = k;
+                    c = '$';
+                    prevIndex = i;
+                }
+            }
+            MaxLen = Math.max(MaxLen, i + 1 - prevIndex);
+        }
+        return MaxLen;
     }
 
     public static void main(String[] args) {

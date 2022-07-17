@@ -300,4 +300,35 @@ public class LinkedListSDEsheet {
         return head;
     }
 
+    public static Node zigZag(Node head) {
+        // 1 2 3 4
+        // 1 3 2 4
+
+        if (head == null)
+            return null;
+        Node prev = head;
+        Node curr = head.next;
+        boolean flag = false; // false means position as even true means odd position
+
+        while (curr != null) {
+            if (!flag) {
+                if (curr.data < prev.data) {
+                    int temp = prev.data;
+                    prev.data = curr.data;
+                    curr.data = temp;
+                }
+            } else {
+                if (curr.data > prev.data) {
+                    int temp = prev.data;
+                    prev.data = curr.data;
+                    curr.data = temp;
+                }
+            }
+            flag = !flag;
+            prev = curr;
+            curr = curr.next;
+        }
+        return head;
+    }
+
 }
