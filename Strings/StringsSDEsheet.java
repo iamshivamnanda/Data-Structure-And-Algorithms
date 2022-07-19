@@ -1,8 +1,12 @@
 package Strings;
 
+import java.nio.charset.CharacterCodingException;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.*;
+
+import javax.print.DocFlavor.STRING;
 
 public class StringsSDEsheet {
     public static boolean isPalindrome(String s) {
@@ -167,6 +171,56 @@ public class StringsSDEsheet {
             MaxLen = Math.max(MaxLen, i + 1 - prevIndex);
         }
         return MaxLen;
+    }
+
+    public int characterReplacement(String s, int k) {
+        // will use sliding window algo
+
+        int l = 0;
+        int maxCount = 0;
+        int ans = 0;
+        HashMap<Character, Integer> hMap = new HashMap<>();
+
+        for (int i = 0; i < s.length(); i++) {
+            hMap.put(s.charAt(i), hMap.getOrDefault(s.charAt(i), 0) + 1);
+            maxCount = Math.max(maxCount, hMap.get(s.charAt(i)));
+
+            while (l <= i && i - l + 1 - maxCount > k) {
+                hMap.replace(s.charAt(l), hMap.get(s.charAt(l)) - 1);
+                l++;
+            }
+            ans = Math.max(ans, i - l + 1);
+        }
+        return ans;
+    }
+
+    public List<List<String>> groupAnagrams(String[] strs) {
+        // strs = ["eat","tea","tan","ate","nat","bat"]
+        // [["bat"],["nat","tan"],["ate","eat","tea"]]
+
+        List<List<String>> res = new ArrayList<>();
+
+        HashMap<String, ArrayList<String>> map = new HashMap<>();
+
+        for (String string : strs) {
+            char ch[] = new char[26];
+            for (char c : string.toCharArray()) {
+                ch[c - 'a']++;
+            }
+            String key = new String(ch);
+
+            if (map.containsKey(key)) {
+                map.get(key).add(string);
+            } else {
+                ArrayList<String> list = new ArrayList<>();
+                list.add(string);
+                map.put(key, list);
+            }
+        }
+
+        res.addAll(map.values());
+        return res;
+
     }
 
     public static void main(String[] args) {

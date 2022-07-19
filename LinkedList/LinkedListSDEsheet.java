@@ -331,4 +331,58 @@ public class LinkedListSDEsheet {
         return head;
     }
 
+    Node compute(Node head) {
+        // 12 15 10 11 5 6 2 3
+        // 15 11 6 3
+        Node curr = head;
+        while (curr.next != null) {
+            if (curr.data < curr.next.data) {
+                curr.data = curr.next.data;
+                curr.next = curr.next.next;
+            } else {
+                curr = curr.next;
+            }
+        }
+        return head;
+    }
+
+    Node divide(int N, Node head) {
+        // 17 15 8 9 2 4 6
+        // 8 2 4 6 17 15 9
+
+        Node curr = head;
+        Node evenStart = null;
+        Node evenEnd = null;
+        Node oddStart = null;
+        Node oddEnd = null;
+
+        while (curr != null) {
+            if (curr.data % 2 == 0) {
+                if (evenStart == null) {
+                    evenStart = curr;
+                    evenEnd = curr;
+                } else {
+                    evenEnd.next = curr;
+                    evenEnd = curr;
+                }
+            } else {
+                if (oddStart == null) {
+                    oddStart = curr;
+                    oddEnd = curr;
+                } else {
+                    oddEnd.next = curr;
+                    oddEnd = curr;
+                }
+            }
+            curr = curr.next;
+        }
+        if (evenEnd != null) {
+            evenEnd.next = oddStart;
+        }
+        if (oddEnd != null) {
+            oddEnd.next = null;
+        }
+
+        return (evenStart != null) ? evenStart : oddStart;
+    }
 }
