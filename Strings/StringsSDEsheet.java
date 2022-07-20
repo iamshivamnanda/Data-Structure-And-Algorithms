@@ -7,30 +7,31 @@ import java.util.Arrays;
 import java.util.*;
 
 import javax.print.DocFlavor.STRING;
+import javax.swing.JApplet;
 
 public class StringsSDEsheet {
-    public static boolean isPalindrome(String s) {
-        s = s.toLowerCase();
-        StringBuffer str = new StringBuffer();
+    // public static boolean isPalindrome(String s) {
+    // s = s.toLowerCase();
+    // StringBuffer str = new StringBuffer();
 
-        for (char C : s.toCharArray()) {
-            if (Character.isLetter(C) || Character.isDigit(C))
-                str.append(C);
-        }
+    // for (char C : s.toCharArray()) {
+    // if (Character.isLetter(C) || Character.isDigit(C))
+    // str.append(C);
+    // }
 
-        s = str.toString();
-        char ch[] = s.toCharArray();
-        System.out.println(Arrays.toString(ch));
-        int low = 0, high = ch.length - 1;
+    // s = str.toString();
+    // char ch[] = s.toCharArray();
+    // System.out.println(Arrays.toString(ch));
+    // int low = 0, high = ch.length - 1;
 
-        while (low < high) {
-            if (ch[low] != ch[high])
-                return false;
-            low++;
-            high--;
-        }
-        return true;
-    }
+    // while (low < high) {
+    // if (ch[low] != ch[high])
+    // return false;
+    // low++;
+    // high--;
+    // }
+    // return true;
+    // }
 
     public static boolean isAnagram(String s, String t) {
         if (s.length() != t.length())
@@ -151,27 +152,27 @@ public class StringsSDEsheet {
 
     }
 
-    public int characterReplacement(String s, int k) {
-        // AABABBA k = 1
-        char c = '$';
-        int j = k;
-        int MaxLen = 1;
-        int prevIndex = 0;
-        for (int i = 1; i < s.length(); i++) {
-            if (s.charAt(i) != s.charAt(i - 1)) {
-                if (j > 0 && (c == '$' || s.charAt(i) == c)) {
-                    c = s.charAt(i);
-                    j--;
-                } else {
-                    j = k;
-                    c = '$';
-                    prevIndex = i;
-                }
-            }
-            MaxLen = Math.max(MaxLen, i + 1 - prevIndex);
-        }
-        return MaxLen;
-    }
+    // public int characterReplacement(String s, int k) {
+    // // AABABBA k = 1
+    // char c = '$';
+    // int j = k;
+    // int MaxLen = 1;
+    // int prevIndex = 0;
+    // for (int i = 1; i < s.length(); i++) {
+    // if (s.charAt(i) != s.charAt(i - 1)) {
+    // if (j > 0 && (c == '$' || s.charAt(i) == c)) {
+    // c = s.charAt(i);
+    // j--;
+    // } else {
+    // j = k;
+    // c = '$';
+    // prevIndex = i;
+    // }
+    // }
+    // MaxLen = Math.max(MaxLen, i + 1 - prevIndex);
+    // }
+    // return MaxLen;
+    // }
 
     public int characterReplacement(String s, int k) {
         // will use sliding window algo
@@ -223,15 +224,54 @@ public class StringsSDEsheet {
 
     }
 
+    public static String longestPalindrome(String s) {
+        // babad
+        // bab
+        HashSet<String> map = new HashSet<>();
+
+        String lonString = "";
+        for (int i = 0; i < s.length(); i++) {
+            int l = 0;
+            while (l <= i) {
+                String str = s.substring(l, i+1);
+                if(map.contains(str)){
+                    l++;
+                    continue;
+                }
+                boolean isPalindrome =  isPalindrome(str);
+                map.add(str);
+                if(isPalindrome){
+                    if(i+1-l > lonString.length()){
+                        lonString = str;
+                    }
+                }
+                l++;
+            }
+        }
+        return lonString;
+    }
+
+    public static boolean isPalindrome(String s) {
+        int l = 0;
+        int r = s.length() - 1;
+        while (l <= r) {
+            if (s.charAt(l) != s.charAt(r))
+                return false;
+            l++;
+            r--;
+        }
+        return true;
+    }
+
     public static void main(String[] args) {
         String string = "A man, a plan, a canal: Panama";
         String string2 = "()";
         String[] strs = { "flower", "flow", "flight" };
-        System.out.println(longestCommonPrefix(strs));
+        // System.out.println(longestCommonPrefix(strs));
         // System.out.println(isValid(string2));
-        // System.out.println(isPalindrome(string));
+        System.out.println(longestPalindrome("babad"));
 
         String s = "bbbb";
-        System.out.println(lengthOfLongestSubstring(s));
+        // System.out.println(lengthOfLongestSubstring(s));
     }
 }

@@ -9,7 +9,7 @@ import BitMagic.numofonebits;
 
 public class LinkedListSDEsheet {
 
-    class Node {
+    static class Node {
         int data;
         Node next;
         Node child;
