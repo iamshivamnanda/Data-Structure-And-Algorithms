@@ -233,15 +233,15 @@ public class StringsSDEsheet {
         for (int i = 0; i < s.length(); i++) {
             int l = 0;
             while (l <= i) {
-                String str = s.substring(l, i+1);
-                if(map.contains(str)){
+                String str = s.substring(l, i + 1);
+                if (map.contains(str)) {
                     l++;
                     continue;
                 }
-                boolean isPalindrome =  isPalindrome(str);
+                boolean isPalindrome = isPalindrome(str);
                 map.add(str);
-                if(isPalindrome){
-                    if(i+1-l > lonString.length()){
+                if (isPalindrome) {
+                    if (i + 1 - l > lonString.length()) {
                         lonString = str;
                     }
                 }
@@ -261,6 +261,163 @@ public class StringsSDEsheet {
             r--;
         }
         return true;
+    }
+
+    public int countSubstrings(String s) {
+        // aaa
+        // 6 "a", "a", "a", "aa", "aa", "aaa".
+        int res = 0;
+        for (int i = 0; i < s.length(); i++) {
+            // for odd len palindroms
+            int l = i;
+            int r = i;
+            res += countSubstringsUtil(s, l, r);
+
+            // for even len palindroms
+            l = i;
+            r = i + 1;
+            res += countSubstringsUtil(s, l, r);
+        }
+        return res;
+    }
+
+    public static long countSubstringsUtil(String s, int l, int r) {
+        long res = 0;
+        while (l >= 0 && r < s.length() && s.charAt(l) == s.charAt(r)) {
+            res++;
+            l--;
+            r++;
+        }
+        return res;
+    }
+
+    long countPS(String str) {
+        long N = 1000000009;
+        int n = str.length();
+        long dp[][] = new long[n][n];
+
+        for (int i = 0; i < n; i++) {
+            dp[i][i] = 1;
+        }
+        for (int L = 2; L <= n; L++) {
+            for (int k = 0; k <= n - L; k++) {
+                int j = L - k - 1;
+                if (str.charAt(k) == str.charAt(j)) {
+                    dp[k][j] = (dp[k + 1][j] + dp[k][j - 1] + 1) % N;
+                } else {
+                    dp[k][j] = (dp[k + 1][j] + dp[k][j - 1] - dp[k + 1][j - 1]) % N;
+                }
+            }
+        }
+        return dp[0][n - 1];
+    }
+
+    // longest proper prefix which is also sufix (used widely in kmp searching
+    // algorithm)
+
+    int lps(String s) {
+        // abab
+        // { 0, 0, 1, 2 }
+        // len = 0 , i = 1 (a != b) i++
+        // len = 0, i = 2 (a == a) i++ j++
+        // len = 1, i = 3 (b == b) i++ j++
+        // i > s.length so loop breaks
+        int len = 0;
+        int i = 1;
+        int lps[] = new int[s.length()];
+        lps[0] = 0;
+
+        while (i < s.length()) {
+            if (s.charAt(i) == s.charAt(len)) {
+                len++;
+                lps[i] = len;
+                i++;
+            } else {
+                if (len != 0) {
+                    len = lps[len - 1];
+                } else {
+                    lps[i] = 0;
+                    i++;
+                }
+            }
+        }
+        return lps[s.length() - 1];
+    }
+
+    public int transfigure(String A, String B) {
+        if (A.length() != B.length()) {
+            return -1;
+        }
+        int count[] = new int[256];
+        for (int i = 0; i < A.length(); i++) {
+            count[A.charAt(i)]++;
+            count[B.charAt(i)]--;
+        }
+
+        for (int i = 0; i < count.length; i++) {
+            if (count[i] != 0) {
+                return -1;
+            }
+        }
+        int i = A.length() - 1;
+        int j = B.length() - 1;
+        int res = 0;
+
+        while (i >= 0) {
+            if (A.charAt(i) != B.charAt(j)) {
+                res++;
+            } else {
+                j--;
+            }
+            i--;
+        }
+
+        return res;
+
+    }
+
+    public String minWindow(String s, String t) {
+        String resString = "";
+        int minLen = Integer.MAX_VALUE;
+        if (s.length() < t.length()) {
+            return resString;
+        }
+
+        int hash_pattern[] = new int[256];
+        int hash_text[] = new int[256];
+
+        for (int i = 0; i < t.length(); i++) {
+            hash_pattern[t.charAt(i)]++;
+        }
+
+        int j = 0;
+        int count = 0;
+        // int start_index = -1;
+
+        for (int i = 0; i < s.length(); i++) {
+            hash_text[s.charAt(i)]++;
+            if (hash_text[s.charAt(i)] <= hash_pattern[s.charAt(i)]) {
+                count++;
+            }
+
+            if (count == t.length()) {
+                // minimize the window
+
+                while (hash_text[s.charAt(j)] > hash_pattern[s.charAt(j)] || hash_pattern[s.charAt(j)] == 0) {
+                    if (hash_text[s.charAt(j)] > hash_pattern[s.charAt(j)])
+                        hash_text[s.charAt(j)]--;
+                    j++;
+                }
+                int newLen = i - j + 1;
+                if (newLen < minLen) {
+                    minLen = newLen;
+                    // start_index = j;
+                    resString = s.substring(j, i + 1);
+                }
+            }
+        }
+
+        return resString;
     }
 
     public static void main(String[] args) {
