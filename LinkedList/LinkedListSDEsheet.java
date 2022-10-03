@@ -385,4 +385,180 @@ public class LinkedListSDEsheet {
 
         return (evenStart != null) ? evenStart : oddStart;
     }
+
+    public static Node getMiddle(Node node) {
+        if (node == null || node.next == null)
+            return node;
+        Node slow = node;
+        Node fast = node.next;
+        while (fast != null && fast.next != null) {
+            slow = slow.next;
+            fast = fast.next.next;
+        }
+        return slow;
+    }
+    // 1 - 2 - 3 - 4
+    //
+
+    public static Node reverseList(Node node) {
+        if (node == null || node.next == null)
+            return node;
+        Node prev = null;
+        Node curr = node;
+
+        while (curr != null) {
+            Node next = curr.next;
+            curr.next = prev;
+            prev = curr;
+            curr = next;
+        }
+
+        return prev;
+    }
+
+    public static Node rearrange(Node root) {
+        /*
+         * To Rearrange Linked List
+         * 1. find the middle of linked list
+         * 2. reverse the linked list from middle to end
+         * 3. now alternativily merge list 1 and list 2
+         */
+        Node node1 = root;
+        Node mNode = getMiddle(root);
+        Node node2 = mNode.next;
+        mNode.next = null;
+        node2 = reverseList(node2);
+
+        // merge the list
+        Node start = node1;
+        Node curr = node1;
+        node1 = node1.next;
+        while (node1 != null || node2 != null) {
+            if (node2 != null) {
+                curr.next = node2;
+                node2 = node2.next;
+                curr = curr.next;
+            }
+            if (node1 != null) {
+                curr.next = node1;
+                node1 = node1.next;
+                curr = curr.next;
+            }
+        }
+        return start;
+
+    }
+
+    public ListNode mergeKLists(ListNode[] lists) {
+        int n = lists.length;
+        int inteval = 1;
+        while (inteval < n) {
+            for (int i = 0; i < n - inteval; i = i + inteval * 2) {
+                lists[i] = mergeTwoList(lists[i], lists[i + inteval]);
+            }
+            inteval = inteval * 2;
+        }
+
+        return n > 0 ? lists[0] : null;
+    }
+
+    public ListNode mergeTwoList(ListNode list1, ListNode list2) {
+        ListNode head = new ListNode(0);
+        ListNode curr = head;
+        while (list1 != null && list2 != null) {
+            if (list1.val < list2.val) {
+                curr.next = list1;
+                list1 = list1.next;
+                curr = curr.next;
+            } else {
+                curr.next = list2;
+                list2 = list2.next;
+                curr = curr.next;
+            }
+        }
+        if (list1 != null) {
+            curr.next = list1;
+        } else if (list2 != null) {
+            curr.next = list2;
+        }
+
+        return head.next;
+    }
+
+    static Node mergeSort(Node head) {
+        if (head == null || head.next == null)
+            return head;
+
+        Node middle = getMiddle(head);
+        Node node2 = middle.next;
+        middle.next = null;
+
+        Node node1 = mergeSort(head);
+        node2 = mergeSort(node2);
+
+        return sortedMerge(node1, node2);
+    }
+
+    static Node sortedMerge(Node first, Node second) {
+        if (first == null)
+            return second;
+        if (second == null)
+            return first;
+        Node res = null;
+        if (first.data < second.data) {
+            res = first;
+            first.next = sortedMerge(first.next, second);
+        } else {
+            res = second;
+            second.next = sortedMerge(first, second.next);
+        }
+
+        return res;
+    }
 }
+
+class GfG {
+
+    Node cur; // Dont change the variable name, its used in main function
+    int carry; // Dont change the variable name, its used in main function
+    
+    //This function is called after the smaller list is added to the sublist of 
+    //bigger list of same size. Once the right sublist is added, the carry
+    //must be added to left side of larger list to get the final result.    
+    void addCarryToRemaining(Node head, LinkedList res)  { 
+        // Write code here
+        if(this.carry>0){
+            res.append(carry);
+        }
+    } 
+    
+    //Function which adds two linked lists of same size represented by head1  
+    //and head2 and returns head of the resultant linked list. Carry
+    //is propagated while returning from the recursion    
+	void addSameSize(Node head1, Node head2, LinkedList res) { 
+
+        ArrayDeque<Integer> stach1 = new ArrayDeque<>();
+        ArrayDeque<Integer> stach2 = new ArrayDeque<>();
+        while (head1 != null) {
+            stach1.push(head1.data);
+            head1 = head1.next;
+        }
+        while (head2 != null) {
+            stach2.push(head2.data);
+            head2 = head2.next;
+        }
+	   
+	    while(!stach1.isEmpty() || !stach2.isEmpty()){
+	        int a = 0,b =0;
+	        if(!stach1.isEmpty()){
+	            a = stach1.pop();
+	        }
+	        if(!stach2.isEmpty()){
+	            b = stach2.pop();
+	        }
+	        int ress = a + b + this.carry;
+            res.prepend(ress % 10);
+	        this.carry = ress/10;
+	    }
+    }
+} 
