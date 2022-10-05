@@ -515,27 +515,168 @@ public class LinkedListSDEsheet {
 
         return res;
     }
+
+    // algorithn is we will find the partion element and partition all elements
+    // around it
+    // we will have start and end
+    // traverse through all
+    // elements greater then selected partition elment (which in this case is end)
+    // put then above the end
+    // return the partition head
+    // rec call for start and end
+
+    public static Node quickSort(Node node) {
+        if (node == null || node.next == null)
+            return node;
+        Node end = node;
+        while (end.next != null) {
+            end = end.next;
+        }
+
+        return quickSortUtil(node, end);
+    }
+
+    public static Node quickSortUtil(Node start, Node end) {
+        if (start == null || end == null || start == end)
+            return start;
+
+        Node partition = partition(start, end);
+        Node node = quickSortUtil(start, partition);
+        quickSortUtil(partition.next, end);
+
+        return node;
+
+    }
+
+    public static Node partition(Node start, Node end) {
+
+        Node prev = start;
+        Node current = start;
+        int pivot = end.data;
+        while (start != end) {
+            if (start.data < pivot) {
+                prev = current;
+                int temp = current.data;
+                current.data = start.data;
+                start.data = temp;
+                current = current.next;
+
+            }
+            start = start.next;
+        }
+        int temp = current.data;
+
+        current.data = pivot;
+
+        end.data = temp;
+
+        return prev;
+    }
+
+    // getlen of linkedlist
+    public static int getLength(Node node) {
+        int size = 0;
+        while (node != null) {
+            size++;
+            node = node.next;
+        }
+        return size;
+    }
+
+    public static Node padd(Node head, int n) {
+        if (head == null || n == 0)
+            return head;
+
+        Node temp = new Node(0);
+        temp.next = head;
+        n--;
+
+        while (n-- > 0) {
+            Node newv = new Node(0);
+            newv.next = temp;
+            temp = newv;
+        }
+        return temp;
+    }
+
+    public static boolean big(Node l1, Node l2) {
+        if (l1 == null) {
+            return false;
+        }
+        if (l2 == null) {
+            return true;
+        }
+        while (l1.data != l2.data) {
+            l1 = l1.next;
+            l2 = l2.next;
+        }
+
+        return (l1.data > l2.data) ? true : false;
+    }
+
+    static int borrow = 0;
+
+    public static void subUtil(Node l1, Node l2) {
+        if (l1 == null && l2 == null)
+            return;
+        subUtil(l1.next, l2.next);
+        l1.data -= borrow;
+
+        if (l1.data < l2.data) {
+            l1.data += 10;
+            borrow = 1;
+        } else {
+            borrow = 0;
+        }
+        l1.data = l1.data - l2.data;
+    }
+
+    // sub two linked list can be of different size
+    static Node subLinkedList(Node l1, Node l2) {
+        // first find the linked list with large size
+        // if size are not equal then pad the smaller linked list
+        // check which linked list is big
+        // then call sub util and maintain borrow
+
+        int length1 = getLength(l1);
+        int length2 = getLength(l2);
+
+        if (length1 < length2) {
+            l1 = padd(l1, length2 - length1);
+        } else {
+            l2 = padd(l2, length1 - length2);
+        }
+
+        if (big(l1, l2)) {
+            subUtil(l1, l2);
+            return l1;
+        } else {
+            subUtil(l2, l1);
+            return l2;
+        }
+
+    }
 }
 
 class GfG {
 
     Node cur; // Dont change the variable name, its used in main function
     int carry; // Dont change the variable name, its used in main function
-    
-    //This function is called after the smaller list is added to the sublist of 
-    //bigger list of same size. Once the right sublist is added, the carry
-    //must be added to left side of larger list to get the final result.    
-    void addCarryToRemaining(Node head, LinkedList res)  { 
+
+    // This function is called after the smaller list is added to the sublist of
+    // bigger list of same size. Once the right sublist is added, the carry
+    // must be added to left side of larger list to get the final result.
+    void addCarryToRemaining(Node head, LinkedList res) {
         // Write code here
-        if(this.carry>0){
+        if (this.carry > 0) {
             res.append(carry);
         }
-    } 
-    
-    //Function which adds two linked lists of same size represented by head1  
-    //and head2 and returns head of the resultant linked list. Carry
-    //is propagated while returning from the recursion    
-	void addSameSize(Node head1, Node head2, LinkedList res) { 
+    }
+
+    // Function which adds two linked lists of same size represented by head1
+    // and head2 and returns head of the resultant linked list. Carry
+    // is propagated while returning from the recursion
+    void addSameSize(Node head1, Node head2, LinkedList res) {
 
         ArrayDeque<Integer> stach1 = new ArrayDeque<>();
         ArrayDeque<Integer> stach2 = new ArrayDeque<>();
@@ -547,18 +688,18 @@ class GfG {
             stach2.push(head2.data);
             head2 = head2.next;
         }
-	   
-	    while(!stach1.isEmpty() || !stach2.isEmpty()){
-	        int a = 0,b =0;
-	        if(!stach1.isEmpty()){
-	            a = stach1.pop();
-	        }
-	        if(!stach2.isEmpty()){
-	            b = stach2.pop();
-	        }
-	        int ress = a + b + this.carry;
+
+        while (!stach1.isEmpty() || !stach2.isEmpty()) {
+            int a = 0, b = 0;
+            if (!stach1.isEmpty()) {
+                a = stach1.pop();
+            }
+            if (!stach2.isEmpty()) {
+                b = stach2.pop();
+            }
+            int ress = a + b + this.carry;
             res.prepend(ress % 10);
-	        this.carry = ress/10;
-	    }
+            this.carry = ress / 10;
+        }
     }
-} 
+}

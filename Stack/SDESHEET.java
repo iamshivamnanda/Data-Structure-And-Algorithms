@@ -327,6 +327,162 @@ public class SDESHEET {
         return maxArea;
     }
 
+    public static boolean isOperator(char ch) {
+        if (ch == '*' || ch == '/' || ch == '+' || ch == '-')
+            return true;
+
+        return false;
+    }
+
+    public static int eval(char op, int a, int b) {
+        switch (op) {
+            case '+':
+                return a + b;
+            case '-':
+                return a - b;
+            case '*':
+                return a * b;
+            case '/':
+                return a / b;
+            default:
+                return -1;
+        }
+    }
+
+    public static int evaluatePostFix(String S) {
+        ArrayDeque<Integer> arrayDeque = new ArrayDeque<>();
+        char[] ch = S.toCharArray();
+        for (char c : ch) {
+            if (isOperator(c)) {
+                int a = arrayDeque.pop();
+                int b = arrayDeque.pop();
+                int res = eval(c, b, a);
+                arrayDeque.push(res);
+            } else {
+                arrayDeque.push(+c);
+            }
+        }
+
+        return arrayDeque.pop();
+    }
+
+    public Queue<Integer> rev(Queue<Integer> q) {
+        ArrayDeque<Integer> stack = new ArrayDeque<>();
+
+        while (!q.isEmpty()) {
+            stack.push(q.remove());
+        }
+
+        while (!stack.isEmpty()) {
+            q.add(stack.pop());
+        }
+
+        return q;
+    }
+
+    public Queue<Integer> modifyQueue(Queue<Integer> q, int k) {
+        /*
+         * Input:
+         * 5 3
+         * 1 2 3 4 5
+         * 
+         * Output:
+         * 3 2 1 4 5
+         */
+
+        ArrayDeque<Integer> stack = new ArrayDeque<>();
+        for (int i = 0; i < k; i++) {
+            stack.push(q.remove());
+        }
+        Queue<Integer> qDeque = new ArrayDeque<>();
+
+        while (!stack.isEmpty()) {
+            qDeque.add(stack.pop());
+        }
+
+        qDeque.addAll(q);
+
+        return qDeque;
+
+    }
+
+    public static int prec(char ch) {
+        switch (ch) {
+            case '+':
+            case '-':
+                return 1;
+
+            case '*':
+            case '/':
+                return 2;
+
+            case '^':
+                return 3;
+        }
+        return -1;
+    }
+
+    public static String infixToPostfix(String exp) {
+        StringBuilder res = new StringBuilder();
+        ArrayDeque<Character> stack = new ArrayDeque<>();
+
+        for (int i = 0; i < exp.length(); i++) {
+            char ch = exp.charAt(i);
+
+            if (Character.isLetterOrDigit(ch)) {
+                res.append(ch);
+            } else if (ch == '(') {
+                stack.push(ch);
+            } else if (ch == ')') {
+                while (!stack.isEmpty() && stack.peek() != '(') {
+                    res.append(stack.pop());
+                }
+                stack.pop();
+            } else {
+                // it is a operator
+                while (!stack.isEmpty() && prec(ch) <= prec(stack.peek())) {
+                    res.append(stack.pop());
+                }
+
+                stack.push(ch);
+            }
+        }
+
+        while (!stack.isEmpty()) {
+            res.append(stack.pop());
+        }
+
+        return res.toString();
+    }
+
+    // find max len of (())))
+    static int findMaxLen(String S) {
+        ArrayDeque<Integer> stack = new ArrayDeque<>();
+        stack.push(-1);
+        int res = 0;
+
+        for (int i = 0; i < S.length(); i++) {
+            char ch = S.charAt(i);
+
+            if (ch == '(') {
+                stack.push(i);
+            } else {
+
+                if (!stack.isEmpty()) {
+                    stack.pop();
+                }
+
+                if (!stack.isEmpty()) {
+                    res = Math.max(res, i - stack.peek());
+                } else {
+                    stack.push(i);
+                }
+            }
+        }
+
+        return res;
+    }
+
     public static void main(String[] args) {
         int nums[] = { 1, 8, 6, 2, 5, 4, 8, 3, 7 };
         // nextPermutation(nums);
@@ -340,5 +496,86 @@ public class SDESHEET {
         // System.out.println("RESULT " + res);
         System.out.println(maxArea(nums));
         // System.out.println(Arrays.toString(res));
+    }
+}
+
+class MyStack {
+    ArrayDeque<Integer> q1;
+    ArrayDeque<Integer> q2;
+
+    public MyStack() {
+        this.q1 = new ArrayDeque<>();
+        this.q2 = new ArrayDeque<>();
+    }
+
+    public void push(int x) {
+        this.q2.add(x);
+
+        while (!this.q1.isEmpty()) {
+            q2.add(q1.remove());
+        }
+
+        ArrayDeque<Integer> q = this.q1;
+        this.q1 = this.q2;
+        this.q2 = q;
+    }
+
+    public int pop() {
+        int x = -1;
+        if (!this.q1.isEmpty()) {
+            x = q1.remove();
+        }
+        return x;
+    }
+
+    public int top() {
+        return q1.peekFirst();
+    }
+
+    public boolean empty() {
+        return q1.isEmpty();
+    }
+}
+
+class SpecialStack {
+    ArrayDeque<Integer> minstack = new ArrayDeque<>();
+
+    public void push(int a, Stack<Integer> s) {
+        if (s.size() == 0) {
+            minstack.push(a);
+            s.push(a);
+        } else {
+            if (a <= minstack.peek()) {
+                minstack.push(a);
+            }
+            s.push(a);
+        }
+
+    }
+
+    public int pop(Stack<Integer> s) {
+        int min = s.pop();
+        if (min == minstack.peek()) {
+            minstack.pop();
+        }
+        return min;
+
+    }
+
+    public int min(Stack<Integer> s) {
+        return minstack.peek();
+    }
+
+    public boolean isFull(Stack<Integer> s, int n) {
+        if (s.size() == n) {
+            return true;
+        }
+        return false;
+    }
+
+    public boolean isEmpty(Stack<Integer> s) {
+        if (s.size() == 0)
+            return true;
+        return false;
     }
 }
