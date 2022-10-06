@@ -483,6 +483,114 @@ public class SDESHEET {
         return res;
     }
 
+    public static int checkRedundancy(String s) {
+        int res = 0;
+        ArrayDeque<Character> arrayDeque = new ArrayDeque<>();
+
+        for (int i = 0; i < s.length(); i++) {
+            if (s.charAt(i) == ')') {
+                char top = arrayDeque.pop();
+
+                int count = 0;
+                while (top != '(') {
+                    count++;
+                    top = arrayDeque.pop();
+                }
+
+                if (count < 2) {
+                    res = 1;
+                    return res;
+                }
+            } else {
+                arrayDeque.push(s.charAt(i));
+            }
+        }
+        return res;
+    }
+
+    public static int isStackPermutation(int n, int[] ip, int[] op) {
+        // task is to find if the stach ip is the permutation of stack of op
+
+        ArrayDeque<Integer> iqDeque = new ArrayDeque<>();
+        for (int I : ip) {
+            iqDeque.add(I);
+        }
+
+        ArrayDeque<Integer> opDeque = new ArrayDeque<>();
+        for (int I : op) {
+            opDeque.add(I);
+        }
+
+        ArrayDeque<Integer> stack = new ArrayDeque<>();
+
+        int top = iqDeque.poll();
+
+        while (!iqDeque.isEmpty()) {
+            if (top == opDeque.peekFirst()) {
+                top = iqDeque.poll();
+                opDeque.poll();
+                while (!stack.isEmpty() && top == stack.peek()) {
+                    top = iqDeque.poll();
+                    stack.pop();
+                }
+            } else {
+                stack.push(top);
+                top = iqDeque.poll();
+            }
+        }
+
+        return (stack.isEmpty() && iqDeque.isEmpty()) ? 1 : 0;
+
+    }
+
+    // How to Sort a Stack using Recursion
+    public static void sortMerge(Stack<Integer> stack, int x) {
+        if (stach.isEmpty() || stack.peek() < x) {
+            stack.push(x);
+            return;
+        }
+        int top = stack.pop();
+        sortMerge(stack, x);
+        stack.push(top);
+
+    }
+
+    public static void sortStack(Stack<Integer> stack) {
+        if (stack.isEmpty())
+            return;
+        int x = stack.pop();
+        sortStack(stack);
+        sortMerge(stack, x);
+    }
+
+    // Queue Base Approach For first not repeating char stream
+    public String FirstNonRepeating(String A) {
+        String res = "";
+        int[] freq = new int[26];
+
+        ArrayDeque<Character> arrayDeque = new ArrayDeque<>();
+
+        for (int i = 0; i < A.length(); i++) {
+            char ch = A.charAt(i);
+            arrayDeque.add(ch);
+            freq[ch - 97]++;
+
+            while (!arrayDeque.isEmpty()) {
+                if (freq[arrayDeque.peekFirst() - 97] > 1) {
+                    arrayDeque.poll();
+                } else {
+                    res += arrayDeque.peekFirst();
+                    break;
+                }
+            }
+            if (arrayDeque.isEmpty()) {
+                res += '#';
+            }
+        }
+
+        return res;
+    }
+
     public static void main(String[] args) {
         int nums[] = { 1, 8, 6, 2, 5, 4, 8, 3, 7 };
         // nextPermutation(nums);
@@ -538,6 +646,31 @@ class MyStack {
 }
 
 class SpecialStack {
+    public int longestValidParentheses(String s) {
+        int res = 0;
+        ArrayDeque<Integer> stack = new ArrayDeque<>();
+        stack.push(-1);
+
+        for (int i = 0; i < s.length(); i++) {
+            char ch = s.charAt(i);
+            if (ch == '(') {
+                stack.push(i);
+            } else {
+                if (!stack.isEmpty()) {
+                    stack.pop();
+                }
+
+                if (!stack.isEmpty()) {
+                    res = Math.max(res, i - stack.peek());
+                } else {
+                    stack.push(i);
+                }
+            }
+        }
+        return res;
+
+    }
+
     ArrayDeque<Integer> minstack = new ArrayDeque<>();
 
     public void push(int a, Stack<Integer> s) {
@@ -577,5 +710,42 @@ class SpecialStack {
         if (s.size() == 0)
             return true;
         return false;
+    }
+}
+
+class MinStack {
+    ArrayDeque<Integer> minStack;
+    ArrayDeque<Integer> stack;
+
+    public MinStack() {
+        this.minStack = new ArrayDeque<>();
+        this.stack = new ArrayDeque<>();
+    }
+
+    public void push(int val) {
+        if (this.stack.size() == 0) {
+            stack.push(val);
+            minStack.push(val);
+        } else {
+            if (val <= this.minStack.peek()) {
+                minStack.push(val);
+            }
+            stack.push(val);
+        }
+    }
+
+    public void pop() {
+        int val = stack.pop();
+        if (val == minStack.peek()) {
+            minStack.pop();
+        }
+    }
+
+    public int top() {
+        return stack.peek();
+    }
+
+    public int getMin() {
+        return minStack.peek();
     }
 }
