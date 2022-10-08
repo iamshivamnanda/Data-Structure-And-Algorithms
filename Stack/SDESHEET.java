@@ -591,6 +591,175 @@ public class SDESHEET {
         return res;
     }
 
+    int celebrity(int M[][], int n) {
+        ArrayDeque<Integer> stack = new ArrayDeque<>();
+        for (int i = 0; i < n; i++) {
+            stack.push(i);
+        }
+
+        while (stack.size() >= 2) {
+            int A = stack.pop();
+            int B = stack.pop();
+
+            if (M[A][B] == 1) {
+                stack.push(B);
+            } else {
+                stack.push(A);
+            }
+        }
+        int C = stack.poll();
+
+        for (int i = 0; i < n; i++) {
+            if (C != i) {
+                if (M[C][i] == 1 || M[i][C] == 0) {
+                    return -1;
+                }
+            }
+        }
+
+        return C;
+    }
+
+    public static long[] nextLargerElement(long[] arr, int n) {
+        ArrayDeque<Long> stack = new ArrayDeque<>();
+        long res[] = new long[n];
+        for (int i = n - 1; i >= 0; i--) {
+            while (!stack.isEmpty() && stack.peek() <= arr[i]) {
+                stack.pop();
+            }
+
+            if (stack.isEmpty()) {
+                res[i] = -1;
+            } else {
+                res[i] = stack.peek();
+            }
+
+            stack.push(arr[i]);
+        }
+
+        return res;
+    }
+
+    public int[][] nearest(int[][] grid) {
+        int res[][] = new int[grid.length][grid[0].length];
+
+        ArrayDeque<Pair> qDeque = new ArrayDeque<>();
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[0].length; j++) {
+                if (grid[i][j] == 1) {
+                    Pair cor = new Pair(i, j);
+                    qDeque.add(cor);
+                }
+            }
+        }
+
+        for (int i = 0; i < res.length; i++) {
+            for (int j = 0; j < res[0].length; j++) {
+                if (grid[i][j] == 0) {
+                    res[i][j] = Integer.MAX_VALUE;
+                    for (Pair pair : qDeque) {
+                        res[i][j] = Math.min(Math.abs(i - pair.getX()) + Math.abs(j - pair.getY()), res[i][j]);
+                    }
+                }
+            }
+        }
+
+        return res;
+    }
+
+    public static boolean isDelm(Pair pair) {
+        if (pair.getX() == -1 && pair.getY() == -1)
+            return true;
+
+        return false;
+    }
+
+    public static boolean isvalid(int r, int c, int n, int m, int grid[][]) {
+        if (r >= 0 && r < n && c >= 0 && c < m && grid[r][c] == 1)
+            return true;
+
+        return false;
+    }
+
+    public static boolean ischeck(int[][] grid) {
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[0].length; j++) {
+                if (grid[i][j] == 1)
+                    return false;
+            }
+        }
+
+        return true;
+    }
+
+    public int orangesRotting(int[][] grid) {
+        int res = 0;
+        ArrayDeque<Pair> qDeque = new ArrayDeque<>();
+        // push all rot oranges cordinates into queue
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[0].length; j++) {
+                if (grid[i][j] == 2)
+                    qDeque.add(new Pair(i, j));
+            }
+        }
+        // add delemiter
+        qDeque.push(new Pair(-1, -1));
+
+        while (!qDeque.isEmpty()) {
+            Boolean flag = false;
+
+            while (!isDelm(qDeque.peekFirst())) {
+                Pair pair = qDeque.remove();
+
+                int x[] = { 0, 0, -1, 1 };
+                int y[] = { 1, -1, 0, 0 };
+
+                for (int i = 0; i < 4; i++) {
+                    int r = pair.getX() + x[i];
+                    int c = pair.getY() + y[i];
+                    if (isvalid(r, c, grid.length, grid[0].length, grid)) {
+                        if (!flag) {
+                            flag = true;
+                            res++;
+                        }
+                        grid[r][c] = 2;
+                        qDeque.add(new Pair(r, c));
+                    }
+                }
+            }
+            // remove delemiter
+            qDeque.remove();
+
+            if (!qDeque.isEmpty() && flag) {
+                qDeque.add(new Pair(-1, -1));
+            }
+        }
+
+        return (ischeck(grid)) ? res : -1;
+    }
+
+    public static int[] help_classmate(int arr[], int n) {
+        // stack
+        ArrayDeque<Integer> qDeque = new ArrayDeque<>();
+        int res[] = new int[n];
+
+        for (int i = n - 1; i >= 0; i--) {
+            while (!qDeque.isEmpty() && arr[i] <= qDeque.peek()) {
+                qDeque.pop();
+            }
+
+            if (qDeque.isEmpty()) {
+                res[i] = -1;
+            } else {
+                res[i] = qDeque.peek();
+            }
+
+            qDeque.push(arr[i]);
+        }
+
+        return res;
+    }
+
     public static void main(String[] args) {
         int nums[] = { 1, 8, 6, 2, 5, 4, 8, 3, 7 };
         // nextPermutation(nums);
@@ -604,6 +773,31 @@ public class SDESHEET {
         // System.out.println("RESULT " + res);
         System.out.println(maxArea(nums));
         // System.out.println(Arrays.toString(res));
+    }
+}
+
+class Pair {
+    int x, y;
+
+    public Pair(int a, int b) {
+        this.x = a;
+        this.y = b;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
     }
 }
 
