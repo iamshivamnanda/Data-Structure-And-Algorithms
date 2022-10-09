@@ -760,6 +760,96 @@ public class SDESHEET {
         return res;
     }
 
+    // // two approaches quite similar and optimized
+    // int tour(int petrol[], int distance[]) {
+    // int start = 0;
+    // int end = 1;
+    // int capacity = petrol[start] - distance[start];
+
+    // while (end != start || capacity < 0) {
+    // while (capacity < 0 && start != end) {
+    // capacity -= petrol[start] - distance[start];
+    // start = (start + 1) % petrol.length;
+    // if (start == 0) {
+    // return -1;
+    // }
+    // }
+
+    // capacity += petrol[end] - distance[end];
+    // end = (end + 1) % petrol.length;
+
+    // }
+    // return start;
+    // }
+
+    // second approcah use only one loop
+    int tour(int petrol[], int distance[]) {
+        int start = 0;
+        int capacity = 0;
+        int deficent = 0;
+
+        for (int i = 0; i < distance.length; i++) {
+            capacity += petrol[i] - distance[i];
+
+            if (capacity < 0) {
+                start = i + 1;
+                deficent += capacity;
+                capacity = 0;
+            }
+        }
+        return (capacity + deficent <= 0) ? start : -1;
+    }
+
+    public static void moveDisk(Stack<Integer> soruce, Stack<Integer> dest, char s, char d) {
+        if (soruce.isEmpty()) {
+            int i = dest.pop();
+            soruce.push(i);
+            movemssg(d, s, i);
+        } else if (dest.isEmpty()) {
+            int i = soruce.pop()
+            dest.push(i);
+            movemssg(s, d, i);
+        } else if (soruce.peek() > dest.peek()) {
+            int i = dest.pop();
+            soruce.push(i);
+            movemssg(d, s, i);
+        } else {
+            int i = soruce.pop()
+            dest.push(i);
+            movemssg(s, d, i);
+        }
+    }
+
+    public static void movemssg(char soruce, char dest, int i) {
+        System.out.println("Move the disk " + i + " from " + soruce + " to " + dest);
+    }
+
+    public static void toh(int n, Stack<Integer> from, Stack<Integer> aux, Stack<Integer> to) {
+
+        char s = 'S', d = 'D', a = 'A';
+        if (n % 2 == 0) {
+            Stack<Integer> temp = aux;
+            aux = to;
+            to = temp;
+        }
+
+        int total_moves = (int) Math.pow(2, n) - 1;
+        for (int i = 1; i <= n; i++) {
+            from.push(i);
+        }
+
+        for (int i = 1; i <= total_moves; i++) {
+            if (i % 3 == 1) {
+                moveDisk(from, to, s, d);
+            } else if (i % 3 == 2) {
+                moveDisk(from, aux, s, a);
+            } else if (i % 3 == 0) {
+                moveDisk(aux, to, a, s);
+            }
+        }
+
+    }
+
     public static void main(String[] args) {
         int nums[] = { 1, 8, 6, 2, 5, 4, 8, 3, 7 };
         // nextPermutation(nums);
@@ -773,6 +863,63 @@ public class SDESHEET {
         // System.out.println("RESULT " + res);
         System.out.println(maxArea(nums));
         // System.out.println(Arrays.toString(res));
+    }
+
+    static int[] maxOfMin(int[] arr, int n) {
+        // Your code here
+        ArrayDeque<Integer> stack = new ArrayDeque<>();
+
+        int left[] = new int[n + 1];
+        int right[] = new int[n + 1];
+
+        for (int i = 0; i < n; i++) {
+            left[i] = -1;
+            right[i] = n;
+        }
+
+        for (int i = 0; i < n; i++) {
+            while (!stack.isEmpty() && arr[i] <= arr[stack.peek()]) {
+                stack.pop();
+            }
+
+            if (!stack.isEmpty()) {
+                left[i] = stack.peek();
+            }
+
+            stack.push(i);
+        }
+
+        stack.clear();
+
+        for (int i = n - 1; i >= 0; i--) {
+            while (!stack.isEmpty() && arr[i] <= arr[stack.peek()]) {
+                stack.pop();
+            }
+
+            if (!stack.isEmpty()) {
+                right[i] = stack.peek();
+            }
+
+            stack.push(i);
+        }
+
+        int ans[] = new int[n];
+        for (int i = 0; i < ans.length; i++) {
+            ans[i] = 0;
+        }
+        // System.out.println(Arrays.toString(left));
+        // System.out.println(Arrays.toString(right));
+        for (int i = 0; i < n; i++) {
+            int len = right[i] - left[i] - 1;
+            // System.out.println(len);
+            ans[len - 1] = Math.max(ans[len - 1], arr[i]);
+        }
+
+        for (int i = n - 2; i >= 0; i--) {
+            ans[i] = Math.max(ans[i], ans[i + 1]);
+        }
+
+        return ans;
     }
 }
 
@@ -942,4 +1089,70 @@ class MinStack {
     public int getMin() {
         return minStack.peek();
     }
+}
+
+// IMPLEMENT KSTACK
+
+class KSTACK {
+    int n;
+    int k;
+    int free;
+    int[] top;
+    int[] next;
+    int[] arr;
+
+    public KSTACK(int n1, int k1) {
+        this.n = n1;
+        this.k = k1;
+        free = 0;
+        this.top = new int[k];
+        this.next = new int[n];
+        this.arr = new int[n];
+
+        for (int i = 0; i < top.length; i++) {
+            top[i] = -1;
+        }
+
+        for (int i = 0; i < next.length - 1; i++) {
+            next[i] = i + 1;
+        }
+        next[next.length - 1] = -1;
+
+    }
+
+    boolean isFull() {
+        return free == -1;
+    }
+
+    boolean isEmpty(int sn) {
+        return top[sn] == -1;
+    }
+
+    void push(int val, int sn) {
+        if (isFull()) {
+            System.out.println("FULL");
+            return;
+        }
+        int i = free;
+        free = next[i];
+
+        next[i] = top[sn];
+
+        top[sn] = i;
+
+        arr[i] = val;
+    }
+
+    int pop(int sn) {
+        if (isEmpty(sn)) {
+            return -1;
+        }
+
+        int i = top[sn];
+        top[sn] = next[i];
+        next[i] = free;
+        free = i;
+        return arr[i];
+    }
+
 }
