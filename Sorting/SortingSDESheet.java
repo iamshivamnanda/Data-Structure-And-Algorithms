@@ -198,4 +198,64 @@ public class SortingSDESheet {
         }
         return;
     }
+
+    static long inversionCount(long arr[], long N) {
+        return inversionCounttUtil(arr, N, 0, N - 1);
+    }
+
+    public static long inversionCounttUtil(long arr[], long N, long low, long high) {
+        long count = 0;
+        if (low < high) {
+            long mid = (low + high) / 2;
+            count += inversionCounttUtil(arr, count, low, mid);
+            count += inversionCounttUtil(arr, count, mid + 1, high);
+            count += inversionCountMerge(arr, low, mid, high);
+        }
+        return count;
+    }
+
+    public static long inversionCountMerge(long arr[], long low, long mid, long high) {
+        long left[] = Arrays.copyOfRange(arr, (int) low, (int) mid + 1);
+        long right[] = Arrays.copyOfRange(arr, (int) mid + 1, (int) high + 1);
+        int i = 0;
+        int j = 0;
+        int k = (int) low;
+        long swaps = 0;
+
+        while (i < left.length && j < right.length) {
+            if (left[i] <= right[j]) {
+                arr[k++] = left[i++];
+            } else {
+                arr[k++] = right[j++];
+                swaps += (mid + 1) - (low + i);
+            }
+        }
+
+        while (i < left.length) {
+            arr[k++] = left[i++];
+        }
+        while (j < right.length) {
+            arr[k++] = right[j++];
+        }
+
+        return swaps;
+    }
+
+    public static ArrayList<Integer> duplicates(int arr[], int n) {
+        HashMap<Integer, Integer> set = new HashMap<>();
+        ArrayList<Integer> res = new ArrayList<>();
+
+        for (int integer : arr) {
+            if (set.containsKey(integer) && set.get(integer) == 1) {
+                res.add(integer);
+            }
+            set.put(integer, set.getOrDefault(integer, 0) + 1);
+        }
+
+        if (res.size() == 0) {
+            res.add(-1);
+        }
+        Collections.sort(res);
+        return res;
+    }
 }
