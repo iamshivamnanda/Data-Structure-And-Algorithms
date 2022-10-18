@@ -1,12 +1,7 @@
 package LinkedList;
 
-import java.net.http.HttpHeaders;
 import java.util.ArrayDeque;
-import java.util.HashMap;
 import java.util.HashSet;
-
-import BitMagic.numofonebits;
-
 public class LinkedListSDEsheet {
 
     static class Node {

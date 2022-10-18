@@ -258,4 +258,67 @@ public class SortingSDESheet {
         Collections.sort(res);
         return res;
     }
+
+    public static long[] productExceptSelf(int nums[], int n) {
+        long left[] = new long[n];
+        long right[] = new long[n];
+
+        left[0] = 1;
+        for (int i = 1; i < n; i++) {
+            left[i] = left[i - 1] * nums[i - 1];
+        }
+
+        right[n - 1] = 1;
+        for (int i = n - 2; i >= 0; i--) {
+            right[i] = right[i + 1] * nums[i + 1];
+        }
+
+        for (int i = 0; i < n; i++) {
+            left[i] = left[i] * right[i];
+        }
+
+        return left;
+    }
+
+    public int minMoves2(int[] nums) {
+        Arrays.sort(nums);
+        int start = 0;
+        int end = nums.length - 1;
+        int res = 0;
+        while (start <= end) {
+            res += nums[end] - nums[start];
+            start++;
+            end--;
+        }
+        return res;
+    }
+
+    public static boolean canBeEqual(int[] target, int[] arr) {
+        HashMap<Integer, Integer> hMap = new HashMap<>();
+        for (int i = 0; i < target.length; i++) {
+            System.out.println(target[i]);
+            hMap.put(target[i], hMap.getOrDefault(target[i],0) + 1);
+        }
+        System.out.println(hMap.toString());
+        for (int i = 0; i < arr.length; i++) {
+            if (!hMap.containsKey(arr[i])) {
+                return false;
+            }
+            int value = hMap.get(arr[i]);
+            if (value == 1) {
+                hMap.remove(arr[i]);
+            } else {
+                hMap.put(arr[i], value - 1);
+            }
+        }
+        System.out.println(hMap.size());
+        return (hMap.size() == 0) ? true : false;
+    }
+    
+
+    public static void main(String[] args) {
+        int target[] = {1,1,1,1,1};
+        int arr[] = {1,1,1,1,1};
+       System.out.println(canBeEqual(target, arr));  
+    }
 }
