@@ -270,4 +270,197 @@ class Solution {
         }
     }
 
+    public int orangesRotting(int[][] grid) {
+        int x[] = { 0, 0, 1, -1 };
+        int y[] = { 1, -1, 0, 0 };
+
+        int res = 0;
+        int fresh = 0;
+        ArrayDeque<Pair> arrayDeque = new ArrayDeque<>();
+
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[0].length; j++) {
+                if (grid[i][j] == 2) {
+                    Pair pair = new Pair(i, j);
+                    arrayDeque.add(pair);
+                }
+                if (grid[i][j] == 1) {
+                    fresh++;
+                }
+            }
+        }
+
+        while (!arrayDeque.isEmpty() && fresh > 0) {
+            int num = arrayDeque.size();
+            res++;
+            while (num-- >= 0) {
+                Pair pair = arrayDeque.poll();
+                for (int i = 0; i < 4; i++) {
+                    int X = x[i] + pair.x, Y = y[i] + pair.y;
+                    if (X >= 0 && Y >= 0 && X < grid.length && Y < grid[0].length && grid[X][Y] == 1) {
+                        grid[X][Y]++;
+                        fresh--;
+                        Pair pair2 = new Pair(X, Y);
+                        arrayDeque.add(pair2);
+                    }
+                }
+            }
+        }
+        return (fresh == 0) ? res : -1;
+    }
+
+    public static boolean isPossible(int pos[], int n, int c, int dist) {
+        int lastCo = pos[0];
+        int count = 1;
+
+        for (int i = 1; i < n; i++) {
+            if (pos[i] - lastCo >= dist) {
+                lastCo = pos[i];
+                count++;
+            }
+        }
+
+        if (count >= c)
+            return true;
+        return false;
+    }
+
+    public static int chessTournament(int[] positions, int n, int c) {
+        int res = 0;
+        Arrays.sort(positions);
+        int low = 1;
+        int high = positions[n - 1] - positions[0];
+
+        while (low <= high) {
+            int mid = (low + high) / 2;
+
+            if (isPossible(positions, n, c, mid)) {
+                res = mid;
+                low = mid + 1;
+            } else {
+                high = mid - 1;
+            }
+
+        }
+        return res;
+    }
+
+    public static boolean findPagesPossible(int a[], int n, int m, int barrier) {
+        int allocStudent = 1;
+        int pages = 0;
+
+        for (int i = 0; i < n; i++) {
+            if (a[i] > barrier)
+                return false;
+
+            if (pages + a[i] > barrier) {
+                allocStudent++;
+                pages = a[i];
+            } else {
+                pages += a[i];
+            }
+        }
+        return !(allocStudent > m);
+    }
+
+    public static int findPages(int[] A, int N, int M) {
+        if (M > N)
+            return -1;
+        int low = A[0];
+        int high = 0;
+        int res = -1;
+        for (int i : A) {
+            low = Math.min(low, i);
+            high += i;
+        }
+
+        while (low <= high) {
+            int mid = (low + high) / 2;
+
+            if (findPagesPossible(A, N, M, mid)) {
+                res = mid;
+                high = mid - 1;
+            } else {
+                low = mid + 1;
+            }
+        }
+
+        return (res == -1) ? res : low;
+    }
+
+    public int minSwaps(int nums[]) {
+        ArrayList<Pair> list = new ArrayList<>();
+
+        for (int i = 0; i < nums.length; i++) {
+            Pair pair = new Pair(nums[i], i);
+            list.add(pair);
+        }
+
+        Collections.sort(list, new Comparator<Pair>() {
+            @Override
+            public int compare(Pair o1, Pair o2) {
+                if (o1.x < o2.x) {
+                    return -1;
+                } else if (o1.x == o2.x) {
+                    return 0;
+                } else {
+                    return 1;
+                }
+            };
+        });
+
+        System.out.println(list.toString());
+
+        int swaps = 0;
+
+        for (int i = 0; i < nums.length; i++) {
+            Pair pair = list.get(i);
+            int val = pair.x;
+            int index = pair.y;
+
+            if (i != index) {
+                swap(list, i, index);
+                swaps++;
+                i--;
+            }
+        }
+        return swaps;
+    }
+
+    public static void swap(ArrayList<Pair> list, int i, int j) {
+        Pair temp = list.get(i);
+        list.set(i, list.get(j));
+        list.set(j, temp);
+    }
+}
+
+class Pair {
+    int x, y;
+
+    public Pair(int a, int b) {
+        this.x = a;
+        this.y = b;
+    }
+
+    public int getX() {
+        return x;
+    }
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    @Override
+    public String toString() {
+        return "Pair [x=" + x + ", y=" + y + "]";
+    }
+
 }
