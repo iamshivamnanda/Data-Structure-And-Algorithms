@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.*;
 
 class Query {
     int L;
@@ -148,6 +149,89 @@ public class ArraysSDEsheet {
 
     }
 
+    public static void setZeros(int matrix[][]) {
+        int row[] = new int[matrix.length];
+        int col[] = new int[matrix[0].length];
+
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[0].length; j++) {
+                if (matrix[i][j] == 0) {
+                    row[i] = -1;
+                    col[j] = -1;
+                }
+            }
+        }
+
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[0].length; j++) {
+                if (row[i] == -1 || col[j] == -1) {
+                    matrix[i][j] = 0;
+                }
+            }
+        }
+    }
+
+    // kadane's algo
+    public static long maxSubarraySum(int[] arr, int n) {
+        int res = 0;
+        int maxRes = 0;
+        for (int i = 0; i < arr.length; i++) {
+            res += arr[i];
+            maxRes = Math.max(maxRes, res);
+            if (res < 0) {
+                res = 0;
+            }
+        }
+        return maxRes;
+    }
+
+    public static void sort012(int[] arr) {
+        int count[] = new int[3];
+
+        for (int i = 0; i < arr.length; i++) {
+            count[arr[i]]++;
+        }
+        int i = 0;
+        for (int j = 0; j < count.length; j++) {
+            while (count[j] > 0) {
+                arr[i++] = j;
+                count[j]--;
+            }
+        }
+    }
+
+    static double medianOfArrays(int n, int m, int a[], int b[]) {
+        if (n > m)
+            return medianOfArrays(m, n, b, a);
+
+        int low = 0;
+        int high = n;
+
+        while (low <= high) {
+            int cut1 = (low + high) / 2;
+            int cut2 = (n + m + 1) / 2 - cut1;
+
+            int l1 = cut1 == 0 ? Integer.MIN_VALUE : a[cut1 - 1];
+            int l2 = cut2 == 0 ? Integer.MIN_VALUE : b[cut2 - 1];
+
+            int r1 = cut1 == n ? Integer.MAX_VALUE : a[cut1];
+            int r2 = cut2 == m ? Integer.MAX_VALUE : b[cut2];
+
+            if (l1 <= r2 && l2 <= r1) {
+                if ((n + m) % 2 == 0)
+                    return (Math.max(l1, l2) + Math.min(r1, r2)) / 2.00;
+
+                return Math.max(l1, l2);
+            } else if (l1 > r2) {
+                high--;
+            } else {
+                low++;
+            }
+        }
+        return 0.00;
+
+    }
+
     public static void main(String[] args) {
         ArrayList<Query> q = new ArrayList<Query>();
         q.add(new Query(0, 4));
@@ -157,4 +241,33 @@ public class ArraysSDEsheet {
         int a[] = { 1, 1, 2, 1, 3, 4, 5, 2, 8 };
         queryResults(a, a.length, q, q.size());
     }
+}
+
+class Solution {
+    static PriorityQueue<Integer> small = new PriorityQueue<>();
+    static PriorityQueue<Integer> large = new PriorityQueue<>();
+
+    // Function to insert heap.
+    public static void insertHeap(int x) {
+        small.add(-1 * x);
+        large.add(-1 * small.poll());
+        balanceHeaps();
+    }
+
+    // Function to balance heaps.
+    public static void balanceHeaps() {
+        if (large.size() > small.size()) {
+            small.add(-1 * large.poll());
+        }
+    }
+
+    // Function to return Median.
+    public static double getMedian() {
+        if (large.size() != small.size()) {
+            return (double) -1 * small.peek();
+        } else {
+            return (large.peek() - small.peek()) / 2.00;
+        }
+    }
+
 }

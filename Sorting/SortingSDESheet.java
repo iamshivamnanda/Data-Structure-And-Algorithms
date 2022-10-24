@@ -297,7 +297,7 @@ public class SortingSDESheet {
         HashMap<Integer, Integer> hMap = new HashMap<>();
         for (int i = 0; i < target.length; i++) {
             System.out.println(target[i]);
-            hMap.put(target[i], hMap.getOrDefault(target[i],0) + 1);
+            hMap.put(target[i], hMap.getOrDefault(target[i], 0) + 1);
         }
         System.out.println(hMap.toString());
         for (int i = 0; i < arr.length; i++) {
@@ -314,11 +314,105 @@ public class SortingSDESheet {
         System.out.println(hMap.size());
         return (hMap.size() == 0) ? true : false;
     }
-    
 
     public static void main(String[] args) {
-        int target[] = {1,1,1,1,1};
-        int arr[] = {1,1,1,1,1};
-       System.out.println(canBeEqual(target, arr));  
+        int target[] = { 1, 1, 1, 1, 1 };
+        int arr[] = { 1, 1, 1, 1, 1 };
+        System.out.println(canBeEqual(target, arr));
+    }
+
+    public static double median(int arr[], int n) {
+        if (n == 0) {
+            return -1;
+        }
+        if (n % 2 == 0) {
+            return (double) (arr[n / 2] + arr[n / 2 + 1]) / 2.00;
+        }
+        return arr[n / 2];
+    }
+
+    public static double MO2(int a, int b) {
+        return (double) (a + b) / 2.00;
+    }
+
+    public static double MO3(int a, int b, int c) {
+        return a + b + c - Math.max(a, Math.max(b, c)) - Math.min(a, Math.min(b, c));
+    }
+
+    static double MO4(int a, int b, int c, int d) {
+        int Max = Math.max(a, Math.max(b, Math.max(c, d)));
+        int Min = Math.min(a, Math.min(b, Math.min(c, d)));
+        return (double) ((a + b + c + d - Max - Min) / 2.0);
+    }
+
+    static double medianOfArrays(int n, int m, int a[], int b[]) {
+        if (n > m) {
+            return medianOfArraysUtil(m, n, b, a);
+        }
+        return medianOfArraysUtil(n, m, a, b);
+    }
+
+    // a is a smaller array having length n , b is a larger array having length m
+    public static double medianOfArraysUtil(int n, int m, int a[], int b[]) {
+        // case: if smaller array is of len 0
+        // return median of larger array
+        if (n == 0)
+            return median(b, m);
+        // case: if smaller array is of len 1 (n == 1)
+        if (n == 1) {
+            // case if larger array is also of len 1 then return median of these two number
+            if (m == 1)
+                return MO2(a[0], b[0]);
+
+            // case if larger array is of size odd i.e m >=3 then res will be med of middle
+            // element of m , m-1, m-2, a[0]
+            if (m % 2 == 1)
+                MO2(b[m / 2], (int) MO3(a[0], b[m / 2 - 1], b[m / 2 + 1]));
+
+            // case three if larger arrray is of len even i.e m >= 2 then med will be med of
+            // larger array and a[0]
+            return MO3(a[0], b[n / 2], b[n / 2 - 1]);
+        } else if (n == 2) {
+            // if larger size is also of len 2 then med will be a[0], a[1], b[1], b[2]
+            if (m == 2)
+                return MO4(a[0], a[1], b[0], b[1]);
+
+            // if larger arr is of size odd i.e m >=3 then med will be
+            // med of b[m/2] , MAx of a[0] , b[n/2 -1] , MIN a[1] , b[n/2 + 1]
+            if (m % 2 == 1)
+                return MO3(b[m / 2], Math.max(a[0], b[n / 2 - 1]), Math.min(a[1], b[n / 2 + 1]));
+
+            // if m is even then median will be
+            return MO4(b[m / 2], b[m / 2 - 1], Math.max(a[0], b[m / 2 - 2]), Math.min(a[1], b[m / 2 + 1]));
+        }
+        int indA = (n - 1) / 2;
+        int indB = (m - 1) / 2;
+
+        // if indA <= indB then median lies between a[indA....] & b[....indeB]
+        if (a[indA] <= b[indB])
+            return medianOfArraysUtil(n / 2 + 1, m - indA, Arrays.copyOfRange(a, indA, a.length), b);
+
+        return medianOfArraysUtil(n / 2 + 1, m - indA, a, Arrays.copyOfRange(b, indB, b.length));
+    }
+
+    public static long findSubarray(long[] arr, int n) {
+        long res = 0;
+        long sum = 0;
+        HashMap<Long, ArrayList<Integer>> hMap = new HashMap<>();
+        for (int i = 0; i < arr.length; i++) {
+            sum += arr[i];
+
+            if (sum == 0)
+                res++;
+
+            ArrayList<Integer> al = new ArrayList<>();
+            if (hMap.containsKey(sum)) {
+                al = hMap.get(sum);
+                res += al.size();
+            }
+            al.add(i);
+            hMap.put(sum, al);
+        }
+        return res;
     }
 }
