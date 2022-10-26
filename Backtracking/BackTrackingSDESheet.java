@@ -218,6 +218,108 @@ public class BackTrackingSDESheet {
         }
         return crossword;
     }
+
+    public static boolean isSafeSudoku(int[][] grid, int row, int col, int num) {
+        // check in row
+        for (int i = 0; i < grid[0].length; i++) {
+            if (grid[row][i] == num) {
+                return false;
+            }
+        }
+
+        // check in col
+        for (int i = 0; i < grid.length; i++) {
+            if (grid[i][col] == num) {
+                return false;
+            }
+        }
+
+        // check in submatrix
+        int sqrt = (int) Math.sqrt(grid.length);
+        int rowStart = row - row % sqrt;
+        int colStart = col - col % sqrt;
+
+        for (int i = rowStart; i < rowStart + sqrt; i++) {
+            for (int j = colStart; j < colStart + sqrt; j++) {
+                if (grid[i][j] == num) {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+
+    }
+
+    public static boolean SolveSudokuUtil(int grid[][], int n, int row, int col) {
+        if (row == n - 1 && col == n)
+            return true;
+
+        if (col == n) {
+            row++;
+            col = 0;
+        }
+
+        if (grid[row][col] != 0) {
+            SolveSudokuUtil(grid, n, row, col + 1);
+        }
+
+        for (int num = 1; num < 10; num++) {
+            if (isSafeSudoku(grid, row, col, num)) {
+                grid[row][col] = num;
+                if (SolveSudokuUtil(grid, n, row, col + 1)) {
+                    return true;
+                }
+                grid[row][col] = 0;
+
+            }
+        }
+
+        return false;
+
+    }
+
+    // Function to find a solved Sudoku.
+    static boolean SolveSudoku(int grid[][]) {
+        return SolveSudokuUtil(grid, grid.length, 0, 0);
+    }
+
+    // Function to print grids of the Sudoku.
+    static void printGrid(int grid[][]) {
+        for (int i = 0; i < grid.length; i++) {
+            System.out.println(Arrays.toString(grid));
+        }
+    }
+
+    static int equalPartition(int N, int arr[]) {
+        int sum = 0;
+        for (int no : arr) {
+            sum += no;
+        }
+
+        if (sum % 2 == 1) {
+            return 0;
+        }
+
+        return isPartition(arr, N, sum / 2) ? 1 : 0;
+    }
+
+    public static boolean isPartition(int arr[], int N, int sum) {
+        if (sum == 0) {
+            return true;
+        }
+
+        if (N == 0 && sum != 0) {
+            return false;
+        }
+
+        if (arr[N - 1] > sum) {
+            return isPartition(arr, N - 1, sum);
+        }
+
+        return isPartition(arr, N - 1, sum) || isPartition(arr, N - 1, sum - arr[N - 1]);
+    }
+
 }
 
 class Pair {
