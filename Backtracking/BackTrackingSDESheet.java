@@ -320,6 +320,167 @@ public class BackTrackingSDESheet {
         return isPartition(arr, N - 1, sum) || isPartition(arr, N - 1, sum - arr[N - 1]);
     }
 
+    public static boolean graphColoringisPossible(boolean graph[][], int n, int index, int col, int color[]) {
+        for (int i = 0; i < n; i++) {
+            if (graph[index][i] && color[i] == col) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    // m-colouring problem
+    public boolean graphColoring(boolean graph[][], int m, int n) {
+        int color[] = new int[n];
+        return graphColoringUtil(graph, m, n, 0, color);
+    }
+
+    public static boolean graphColoringUtil(boolean graph[][], int m, int n, int index, int color[]) {
+        if (index == n) {
+            return true;
+        }
+
+        for (int i = 1; i <= m; i++) {
+            if (graphColoringisPossible(graph, n, index, i, color)) {
+                color[index] = i;
+                if (graphColoringUtil(graph, m, n, index + 1, color)) {
+                    return true;
+                }
+                color[index] = 0;
+            }
+        }
+        return false;
+    }
+
+    public static boolean isParenthese(char ch) {
+        if (ch == '(' || ch == ')')
+            return true;
+        return false;
+    }
+
+    public static boolean isValid(String str) {
+        int count = 0;
+
+        for (int i = 0; i < str.length(); i++) {
+            if (str.charAt(i) == '(') {
+                count++;
+            } else if (str.charAt(i) == ')') {
+                count--;
+            }
+
+            if (count < 0) {
+                return false;
+            }
+        }
+        if (count < 0) {
+            return false;
+        }
+        return true;
+
+    }
+
+    // remove Invalid Parantheses
+    public static ArrayList<String> removeInvalidParentheses(String s) {
+        ArrayList<String> res = new ArrayList<>();
+
+        ArrayDeque<String> queue = new ArrayDeque<>();
+        HashSet<String> visit = new HashSet<>();
+
+        queue.add(s);
+        visit.add(s);
+
+        boolean lvl = false;
+        while (!queue.isEmpty()) {
+            String string = queue.poll();
+            if (isValid(string)) {
+                res.add(string);
+                lvl = true;
+            }
+            if (lvl) {
+                continue;
+            }
+
+            for (int i = 0; i < string.length(); i++) {
+                if (!isParenthese(string.charAt(i))) {
+                    continue;
+                }
+                String newStr = string.substring(0, i) + string.substring(i + 1);
+                if (!visit.contains(newStr)) {
+                    queue.add(newStr);
+                    visit.add(newStr);
+                }
+            }
+        }
+        return res;
+    }
+
+    // Word Break
+    static List<String> wordBreak(int n, List<String> dict, String s) {
+        String ans = "";
+        ArrayList<String> res = new ArrayList<>();
+        wordBreakUtil(s.length(), dict, s, res, ans);
+        return res;
+    }
+
+    public static void wordBreakUtil(int n, List<String> dict, String s, List<String> res, String ans) {
+        for (int i = 1; i <= n; i++) {
+            String str = s.substring(0, i);
+
+            if (dict.contains(str)) {
+                if (i == n) {
+                    ans += str;
+                    res.add(ans);
+                    return;
+                }
+
+                wordBreakUtil(n - i, dict, s.substring(i, n), res, ans + str + " ");
+            }
+        }
+    }
+
+    static boolean checkPalindrome(String str) {
+        int len = str.length();
+        len--;
+        for (int i = 0; i < len; i++) {
+            if (str.charAt(i) != str.charAt(len))
+                return false;
+            len--;
+        }
+        return true;
+    }
+
+    static ArrayList<ArrayList<String>> allPalindromicPerms(String S) {
+        // code here
+        ArrayList<ArrayList<String>> res = new ArrayList<>();
+        ArrayList<String> temp = new ArrayList<>();
+        allPalindromicPermsUtil(S, 0, res, temp);
+        return res;
+    }
+
+    public static void allPalindromicPermsUtil(String S, int index, ArrayList<ArrayList<String>> res,
+            ArrayList<String> temp) {
+        String str = "";
+        ArrayList<String> curr = new ArrayList<>(temp);
+
+        if (index == 0) {
+            temp.clear();
+        }
+        for (int i = index; i < S.length(); i++) {
+            str = str + S.charAt(i);
+
+            if (checkPalindrome(str)) {
+                temp.add(str);
+                if (i + 1 < S.length()) {
+                    allPalindromicPermsUtil(S, i + 1, res, temp);
+                } else {
+                    res.add(temp);
+                }
+            }
+
+            temp = new ArrayList<>(curr);
+        }
+    }
 }
 
 class Pair {
