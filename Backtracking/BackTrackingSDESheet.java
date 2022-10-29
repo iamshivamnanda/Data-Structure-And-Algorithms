@@ -584,7 +584,7 @@ public class BackTrackingSDESheet {
 
     }
 
-    static int min_dist;
+    // static int min_dist;
 
     // find shortest path
     public static int findShortestPath(int[][] mat) {
@@ -605,33 +605,129 @@ public class BackTrackingSDESheet {
         return min_dist == Integer.MAX_VALUE ? -1 : min_dist;
     }
 
-    boolean dfs(ArrayList<ArrayList<Integer>> adj, int u,int cnt,int N){
-        if(cnt==N) return true;
+    boolean dfs(ArrayList<ArrayList<Integer>> adj, int u, int cnt, int N) {
+        if (cnt == N)
+            return true;
         vis[u] = true;
-        for(int i:adj.get(u)){
-            if(!vis[i] && dfs(adj,i,cnt+1,N)) return true;
+        for (int i : adj.get(u)) {
+            if (!vis[i] && dfs(adj, i, cnt + 1, N))
+                return true;
         }
         vis[u] = false;
         return false;
     }
+
     boolean[] vis;
-    boolean check(int N, int M, ArrayList<ArrayList<Integer>> Edges) 
-    { 
-        vis = new boolean[N+1];
+
+    boolean check(int N, int M, ArrayList<ArrayList<Integer>> Edges) {
+        vis = new boolean[N + 1];
         ArrayList<ArrayList<Integer>> adj = new ArrayList<>();
-        for(int i = 0;i<=N;i++){
+        for (int i = 0; i <= N; i++) {
             adj.add(new ArrayList<>());
         }
-        for(ArrayList<Integer> i: Edges){
+        for (ArrayList<Integer> i : Edges) {
             int u = i.get(0);
             int v = i.get(1);
             adj.get(u).add(v);
             adj.get(v).add(u);
         }
-        for(int i = 1;i<N;i++){
-            if(dfs(adj,i,1,N)) return true;
+        for (int i = 1; i < N; i++) {
+            if (dfs(adj, i, 1, N))
+                return true;
         }
         return false;
+    }
+
+    public static void tugOfWarUtil(ArrayList<Integer> arr, int n, boolean[] visited, int sum, int curSum, int seleted,
+            int curIndex) {
+        if (curIndex == n)
+            return;
+
+        if ((n / 2 - seleted) > (n - curIndex))
+            return;
+
+        // not including cur element
+        tugOfWarUtil(arr, n, visited, sum, curSum, seleted, curIndex + 1);
+
+        seleted++;
+        visited[curIndex] = true;
+        curSum += arr.get(curIndex);
+
+        if (seleted == n / 2) {
+            if (Math.abs( (sum-curSum)  - curSum) < min_dist) {
+                min_dist = Math.abs((sum-curSum) - curSum);
+            }
+        } else {
+            tugOfWarUtil(arr, n, visited, sum, curSum, seleted, curIndex + 1);
+        }
+        visited[curIndex] = false;
+
+    }
+
+    static int min_dist;
+
+    // find the min diff by making two arrays of one arr
+    public static int tugOfWar(ArrayList<Integer> arr, int n) {
+        // need to use backtracking for it
+        // two cases 1. include the cur element 2. not include the cur element
+        // base case when size of selected arr is n/2 then check the min sum diff
+        // base case curr posiiton == n i,e it is last element out of range return
+        // base case check no of elementes left are not less than elements req to form
+        // one part of arr
+
+        boolean visited[] = new boolean[n];
+        int sum = 0;
+        for (int i = 0; i < arr.size(); i++)
+            sum += arr.get(i);
+        System.out.println(sum);
+        min_dist = Integer.MAX_VALUE;
+        tugOfWarUtil(arr, n, visited, sum, 0, 0, 0);
+
+        return min_dist;
+
+    }
+
+    public static void findMaximumNumUtil(char ch[], int k) {
+        if (k ==0)
+            return;
+        for (int i = 0; i < ch.length; i++) {
+            for (int j = i; j < ch.length; j++) {
+                if(ch[j] > ch[i]){
+                    char temp = ch[j];                    
+                    ch[j] = ch[i];
+                    ch[i] = temp;                    
+
+                    if(String.valueOf(new String(ch)).compareTo(max_val) > 0){
+                        max_val = new String(ch);
+                    }
+                    findMaximumNumUtil(ch, k-1);
+
+                    temp = ch[j];                    
+                    ch[j] = ch[i];
+                    ch[i] = temp;  
+
+                }
+            }
+        }
+    }
+
+    static String max_val;
+    public static String findMaximumNum(String str, int k)
+    {
+        max_val = str;
+        char ch[] = str.toCharArray();
+        findMaximumNumUtil(ch, k);
+
+        return max_val;
+    }
+
+    public static void main(String[] args) {
+        ArrayList<Integer> list = new ArrayList<>();
+        list.add(10);
+        list.add(10);
+        list.add(10);
+
+        System.out.println(tugOfWar(list, list.size()));
     }
 }
 
