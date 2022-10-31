@@ -192,17 +192,17 @@ public class GREEDYSDESHEET {
 
     public static void egyptianFractionUtil(int num, int den, ArrayList<Integer> output) {
         if (num == 0)
-        return;
+            return;
         int newDen = (int) Math.ceil(1.0 * den / num);
         output.add(newDen);
         egyptianFractionUtil(num * newDen - den, newDen * den, output);
-        
+
     }
-    
+
     // Egpytian Fraction
     public static String egyptianFraction(int num, int den) {
         if (num % den == 0)
-        return "";
+            return "";
         ArrayList<Integer> output = new ArrayList<>();
         egyptianFractionUtil(num, den, output);
         String str = "";
@@ -214,13 +214,119 @@ public class GREEDYSDESHEET {
 
     }
 
+    // Function to get the maximum total value in the knapsack.
+    double fractionalKnapsack(int W, Item arr[], int n) {
+        // Your code here
+        Arrays.sort(arr, new Comparator<Item>() {
+            @Override
+            public int compare(Item item1,
+                    Item item2) {
+                double cpr1 = (double) item1.value / (double) item1.weight;
+                double cpr2 = (double) item2.value / (double) item2.weight;
+
+                if (cpr1 < cpr2)
+                    return 1;
+                else
+                    return -1;
+            }
+        });
+        double res = 0;
+        for (int i = 0; i < n; i++) {
+            if (W - arr[i].weight > 0) {
+                res += arr[i].value;
+                W -= arr[i].weight;
+            } else {
+                double fraction = ((double) W / (double) arr[i].weight);
+                res += arr[i].value * fraction;
+                break;
+            }
+        }
+        return res;
+    }
+
+    int maxChainLength(Pair arr[], int n) {
+        Arrays.sort(arr, (a, b) -> a.y - b.y);
+        int res = 0;
+        int prev = Integer.MIN_VALUE;
+        for (int i = 0; i < n; i++) {
+            if (arr[i].x > prev) {
+                res++;
+                prev = arr[i].y;
+            }
+        }
+        return res;
+    }
+
+    static String smallestNumber(int S, int D) {
+        if (S == 0) {
+            return (D == 1) ? "0" : "-1";
+        }
+        if (S > 9 * D) {
+            return "-1";
+        }
+        StringBuilder res = new StringBuilder();
+        S -= 1;
+        for (int i = D - 1; i > 0; i--) {
+            if (S > 9) {
+                res.insert(0, "9");
+                S -= 9;
+            } else {
+                res.insert(0, S);
+                S = 0;
+            }
+        }
+        res.insert(0, String.valueOf(S + 1));
+        return res.toString();
+    }
+
+    long maxSum(long arr[], int n) {
+        long res = 0;
+        Arrays.sort(arr);
+        for (int i = 0; i < n / 2; i++) {
+            res -= 2 * arr[i];
+            res += 2 * arr[n - i - 1];
+        }
+        return res;
+    }
+
+    static List<Long> minimumSquares(long L, long B)
+    {
+        //considering B as smallest
+       if(L<B){
+        int temp = L;
+        L = B;
+        B = temp;
+       }
+       
+    }
+
     public static void main(String[] args) {
         // int arr[] = { 0 };
         // System.out.println(minSum(arr, arr.length));
 
-        System.out.println(egyptianFraction(12, 13));
+        // System.out.println(egyptianFraction(12, 13));
+        System.out.println(smallestNumber(9, 2));
     }
 
+}
+
+class Pair {
+    int x;
+    int y;
+
+    public Pair(int a, int b) {
+        x = a;
+        y = b;
+    }
+}
+
+class Item {
+    int value, weight;
+
+    Item(int x, int y) {
+        this.value = x;
+        this.weight = y;
+    }
 }
 
 class Activity {
