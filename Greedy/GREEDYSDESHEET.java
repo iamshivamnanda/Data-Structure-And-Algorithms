@@ -289,23 +289,104 @@ public class GREEDYSDESHEET {
         return res;
     }
 
-    static List<Long> minimumSquares(long L, long B)
-    {
-        //considering B as smallest
-       if(L<B){
-        int temp = L;
-        L = B;
-        B = temp;
-       }
-       
+    static List<Long> minimumSquares(long L, long B) {
+        // considering B as smallest
+        if (L < B) {
+            int temp = L;
+            L = B;
+            B = temp;
+        }
+
+    }
+
+    // lexigraphically snallest array
+    public static void minSwapsLexiSmallest(int arr[], int n, int k) {
+
+        for (int i = 0; i < n && k > 0; i++) {
+            int pos = i;
+            for (int j = i + 1; j < n; j++) {
+                if (j - i > k) {
+                    break;
+                }
+                if (arr[j] < arr[pos])
+                    pos = j;
+            }
+            // swap numbers
+            int temp;
+            for (int j = pos; j > i; j--) {
+                temp = arr[j];
+                arr[j] = arr[j - 1];
+                arr[j - 1] = temp;
+            }
+            k -= pos - i;
+        }
+    }
+
+    public static String rearrangeCharacters(String str) {
+
+        int count[] = new int[256];
+        PriorityQueue<Key> priorityQueue = new PriorityQueue<>(new Comparator<Key>() {
+
+            @Override
+            public int compare(Key o1, Key o2) {
+                if (o1.freq < o2.freq) {
+                    return 1;
+                } else if (o1.freq == o2.freq) {
+                    return 0;
+                } else {
+                    return -1;
+                }
+            }
+
+        });
+        for (int i = 0; i < str.length(); i++) {
+            count[str.charAt(i) - 'a']++;
+        }
+
+        for (char i = 'a'; i <= 'z'; i++) {
+            int val = i - 'a';
+            if (count[val] > 0) {
+                priorityQueue.add(new Key(count[val], i));
+            }
+        }
+        StringBuilder res = new StringBuilder();
+        Key prev = new Key(-1, '#');
+
+        while (priorityQueue.size() != 0) {
+            Key pq = priorityQueue.poll();
+            res.append(pq.ch);
+
+            if (prev.freq > 0) {
+                priorityQueue.add(prev);
+            }
+
+            pq.freq--;
+            prev = pq;
+        }
+
+        return (res.length() == str.length()) ? res.toString() : "-1";
+
     }
 
     public static void main(String[] args) {
-        // int arr[] = { 0 };
+        int arr[] = { 7, 6, 9, 2, 1 };
+        minSwapsLexiSmallest(arr, arr.length, 3);
+        System.out.println(Arrays.toString(arr));
         // System.out.println(minSum(arr, arr.length));
 
         // System.out.println(egyptianFraction(12, 13));
-        System.out.println(smallestNumber(9, 2));
+        // System.out.println(smallestNumber(9, 2));
+    }
+
+}
+
+class Key {
+    int freq;
+    char ch;
+
+    public Key(int freq, char ch) {
+        this.freq = freq;
+        this.ch = ch;
     }
 
 }
