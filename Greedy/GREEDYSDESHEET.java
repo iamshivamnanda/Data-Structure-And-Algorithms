@@ -292,7 +292,7 @@ public class GREEDYSDESHEET {
     static List<Long> minimumSquares(long L, long B) {
         // considering B as smallest
         if (L < B) {
-            int temp = L;
+            long temp = L;
             L = B;
             B = temp;
         }
@@ -368,6 +368,145 @@ public class GREEDYSDESHEET {
 
     }
 
+    static int[] dijkstra(int V, ArrayList<ArrayList<ArrayList<Integer>>> adj, int S) {
+        // dijkstra algorithm will be using hashmap+ queue for futher optimization
+        boolean visited[] = new boolean[V];
+        PriorityQueue<Pair> priorityQueue = new PriorityQueue<>();
+        HashMap<Integer, Pair> hMap = new HashMap<>();
+
+        int ans[] = new int[V];
+        Arrays.fill(ans, Integer.MAX_VALUE);
+
+        priorityQueue.add(new Pair(S, 0));
+        ans[S] = 0;
+
+        while (!priorityQueue.isEmpty()) {
+            Pair cur = priorityQueue.remove();
+            hMap.remove(cur.x);
+
+            if (visited[cur.x]) {
+                continue;
+            }
+
+            visited[cur.x] = true;
+            ArrayList<ArrayList<Integer>> neg = adj.get(cur.x);
+
+            for (ArrayList<Integer> arrayList : neg) {
+                int vertex = arrayList.get(0);
+                int wt = arrayList.get(1);
+
+                if (ans[vertex] > ans[cur.x] + wt) {
+                    ans[vertex] = ans[cur.x] + wt;
+                    if (hMap.containsKey(vertex)) {
+                        Pair pair = hMap.get(vertex);
+                        pair.y = ans[vertex];
+                    } else {
+                        Pair newPair = new Pair(vertex, ans[vertex]);
+                        priorityQueue.add(newPair);
+                        hMap.put(vertex, newPair);
+                    }
+                }
+            }
+        }
+
+        return ans;
+    }
+
+    public static int getMax(int amount[]) {
+        int mxInx = 0;
+        for (int i = 1; i < amount.length; i++) {
+            if (amount[i] > amount[mxInx]) {
+                mxInx = i;
+            }
+        }
+        return mxInx;
+    }
+
+    public static int getMin(int amount[]) {
+        int minInx = 0;
+        for (int i = 1; i < amount.length; i++) {
+            if (amount[i] < amount[minInx]) {
+                minInx = i;
+            }
+        }
+        return minInx;
+    }
+
+    public static void minCashFlowRec(int amount[], ArrayList<ArrayList<Integer>> res) {
+        // get the max crediter and debitor
+        int maxCreditor = getMax(amount);
+        int maxDebitor = getMax(amount);
+
+        if (amount[maxCreditor] == 0 && amount[maxDebitor] == 0) {
+            return;
+        }
+
+        // get the minimum of both creditor and debitor
+        int am = Math.min(amount[maxCreditor], -amount[maxDebitor]);
+
+        amount[maxCreditor] -= am;
+        amount[maxDebitor] += am;
+        res.get(maxDebitor).set(maxCreditor, am);
+
+        minCashFlowRec(amount, res);
+    }
+
+    // get the min cash flow amoung freinds/people
+    public static ArrayList<ArrayList<Integer>> minCashFlow(int n, int[][] g) {
+        // store the net amount for the person
+        int amount[] = new int[n];
+
+        for (int i = 0; i < g.length; i++) {
+            for (int j = 0; j < n; j++) {
+                amount[i] += (g[j][i] - g[i][j]);
+            }
+        }
+        ArrayList<Integer> list = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            list.add(0);
+        }
+        ArrayList<ArrayList<Integer>> res = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            res.add(new ArrayList<>(list));
+        }
+        minCashFlowRec(amount, res);
+        return res;
+
+    }
+
+    public static int minimumCostOfBreaking(int[] X, int[] Y, int M, int N) {
+        int res = 0;
+
+        X = Arrays.stream(X).boxed().sorted(Collections.reverseOrder()).mapToInt(Integer::intValue).toArray();
+        Y = Arrays.stream(Y).boxed().sorted(Collections.reverseOrder()).mapToInt(Integer::intValue).toArray();
+
+        int i = 0, j = 0;
+        int hor = 1, ver = 1;
+        while (i < X.length && j < Y.length) {
+            if(X[i] > Y[j]){
+                res += X[i] * ver;
+                hor++;
+                i++;
+            }else{
+                res += Y[j] * hor;
+                ver++;
+                j++;
+            }
+        }
+        int total = 0;
+        while (i<X.length) {
+            total = X[i++];
+            res += total * ver;
+        }
+
+        while (j< Y.length) {
+            total = Y[j++];
+            res += total * hor;
+        }
+
+        return res;
+    }
+
     public static void main(String[] args) {
         int arr[] = { 7, 6, 9, 2, 1 };
         minSwapsLexiSmallest(arr, arr.length, 3);
@@ -391,13 +530,18 @@ class Key {
 
 }
 
-class Pair {
+class Pair implements Comparable<Pair> {
     int x;
     int y;
 
     public Pair(int a, int b) {
         x = a;
         y = b;
+    }
+
+    @Override
+    public int compareTo(Pair that) {
+        return this.y - that.y;
     }
 }
 
