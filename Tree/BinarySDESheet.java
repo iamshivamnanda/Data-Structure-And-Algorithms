@@ -144,4 +144,116 @@ public class BinarySDESheet {
         leftViewUtil(node.left, list, level + 1);
         leftViewUtil(node.right, list, level + 1);
     }
+
+    ArrayList<Integer> rightView(Node node) {
+        ArrayList<Integer> res = new ArrayList<>();
+        rightViewUtil(node, res, 0);
+        return res;
+    }
+
+    public static void rightViewUtil(Node node, ArrayList<Integer> res, int level) {
+        if (node == null) {
+            return;
+        }
+        if (level == res.size()) {
+            res.add(node.data);
+        }
+        rightViewUtil(node.right, res, level + 1);
+        rightViewUtil(node.left, res, level + 1);
+    }
+
+    // Function to store the zig zag order traversal of tree in a list.
+    ArrayList<Integer> zigZagTraversal(Node root) {
+        // it is a level order treversal with reverss lot alternative
+        ArrayDeque<Node> queue = new ArrayDeque<>();
+        ArrayList<Integer> res = new ArrayList<>();
+
+        ArrayDeque<Integer> stack = new ArrayDeque<>();
+        boolean flag = false;
+        queue.add(root);
+
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            for (int i = 0; i < size; i++) {
+                Node cur = queue.remove();
+                if (cur.left != null)
+                    queue.add(cur.left);
+                if (cur.right != null)
+                    queue.add(cur.right);
+
+                if (flag) {
+                    stack.push(cur.data);
+                } else {
+                    res.add(cur.data);
+                }
+            }
+            while (!stack.isEmpty()) {
+                res.add(stack.pop());
+            }
+            flag = !flag;
+        }
+        return res;
+    }
+
+    boolean check(Node root) {
+        return checkUtil(root, 0);
+    }
+
+    static int maxLevel = Integer.MAX_VALUE;
+
+    boolean checkUtil(Node root, int level) {
+        if (root == null) {
+            if (level > maxLevel) {
+                return false;
+            }
+            maxLevel = level;
+        }
+        return checkUtil(root.left, level + 1) && checkUtil(root.right, level + 1);
+    }
+
+    boolean check(Node root) {
+        // using level order treversal
+        ArrayDeque<Node> qDeque = new ArrayDeque<>();
+        boolean flag = false;
+
+        qDeque.add(root);
+
+        while (!qDeque.isEmpty()) {
+            int size = qDeque.size();
+            for (int i = 0; i < size; i++) {
+                Node cur = qDeque.remove();
+                if (cur.left == null && cur.right == null) {
+                    flag = true;
+                }
+                if (cur.left != null)
+                    qDeque.add(cur.left);
+                if (cur.right != null)
+                    qDeque.add(cur.right);
+            }
+
+            if (flag && qDeque.size() != 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    boolean isBalanced(Node root) {
+        if (root == null) {
+            return true;
+        }
+        int left = isBalancedUtil(root.left);
+        int right = isBalancedUtil(root.right);
+        return (Math.abs(right - left) <= 1) && isBalanced(root.left) && isBalanced(root.right);
+    }
+
+    int isBalancedUtil(Node root) {
+        if (root == null) {
+            return 0;
+        }
+        int left = isBalancedUtil(root.left) + 1;
+        int right = isBalancedUtil(root.right) + 1;
+        return Math.max(left, right);
+    }
+
 }
