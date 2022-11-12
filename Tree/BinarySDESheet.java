@@ -211,32 +211,32 @@ public class BinarySDESheet {
         return checkUtil(root.left, level + 1) && checkUtil(root.right, level + 1);
     }
 
-    boolean check(Node root) {
-        // using level order treversal
-        ArrayDeque<Node> qDeque = new ArrayDeque<>();
-        boolean flag = false;
+    // boolean check(Node root) {
+    // // using level order treversal
+    // ArrayDeque<Node> qDeque = new ArrayDeque<>();
+    // boolean flag = false;
 
-        qDeque.add(root);
+    // qDeque.add(root);
 
-        while (!qDeque.isEmpty()) {
-            int size = qDeque.size();
-            for (int i = 0; i < size; i++) {
-                Node cur = qDeque.remove();
-                if (cur.left == null && cur.right == null) {
-                    flag = true;
-                }
-                if (cur.left != null)
-                    qDeque.add(cur.left);
-                if (cur.right != null)
-                    qDeque.add(cur.right);
-            }
+    // while (!qDeque.isEmpty()) {
+    // int size = qDeque.size();
+    // for (int i = 0; i < size; i++) {
+    // Node cur = qDeque.remove();
+    // if (cur.left == null && cur.right == null) {
+    // flag = true;
+    // }
+    // if (cur.left != null)
+    // qDeque.add(cur.left);
+    // if (cur.right != null)
+    // qDeque.add(cur.right);
+    // }
 
-            if (flag && qDeque.size() != 0) {
-                return false;
-            }
-        }
-        return true;
-    }
+    // if (flag && qDeque.size() != 0) {
+    // return false;
+    // }
+    // }
+    // return true;
+    // }
 
     boolean isBalanced(Node root) {
         if (root == null) {
@@ -254,6 +254,308 @@ public class BinarySDESheet {
         int left = isBalancedUtil(root.left) + 1;
         int right = isBalancedUtil(root.right) + 1;
         return Math.max(left, right);
+    }
+
+    public void toSumTree(Node root) {
+        toSumTreeUtil(root);
+    }
+
+    public static Node toSumTreeUtil(Node root) {
+        if (root == null) {
+            return root;
+        }
+
+        int left = 0;
+        int right = 0;
+        if (root.left != null)
+            left = root.left.data;
+        if (root.right != null)
+            right = root.right.data;
+
+        int leftNode = 0;
+        if (root.left != null)
+            leftNode = toSumTreeUtil(root.left).data;
+        int rightNode = 0;
+        if (root.right != null)
+            rightNode = toSumTreeUtil(root.right).data;
+
+        root.data = left + right + leftNode + rightNode;
+        return root;
+    }
+
+    // Return True if the given trees are isomotphic. Else return False.
+    boolean isIsomorphic(Node root1, Node root2) {
+        if (root1 == null && root2 == null)
+            return true;
+
+        if (root1 == null || root2 == null)
+            return false;
+
+        if (root1.data != root2.data)
+            return false;
+
+        return (isIsomorphic(root1.left, root2.left) && isIsomorphic(root1.right, root2.right)) ||
+                (isIsomorphic(root1.left, root2.right) && isIsomorphic(root1.right, root2.left));
+
+    }
+
+    public boolean isSameTree(TreeNode p, TreeNode q) {
+        if (p == null && q == null)
+            return true;
+
+        if (p == null || q == null)
+            return false;
+
+        if (p.val != q.val)
+            return false;
+
+        return isSameTree(p.left, q.left) && isSameTree(p.right, q.right);
+    }
+
+    public static Node buildTree(int inorder[], int preorder[], int n) {
+        hMap = new HashMap<>();
+        curIndex = 0;
+        for (int i = 0; i < inorder.length; i++) {
+            hMap.put(inorder[i], i);
+        }
+
+        return buildTreeUtil(inorder, preorder, 0, inorder.length - 1);
+    }
+
+    static int curIndex = 0;
+    static HashMap<Integer, Integer> hMap;
+
+    public static Node buildTreeUtil(int inorder[], int preorder[], int start, int end) {
+        System.out.printf("%d %d \n", start, end);
+        if (start > end)
+            return null;
+
+        Node tNode = new Node(preorder[curIndex++]);
+        if (start == end) {
+            return tNode;
+        }
+
+        int index = hMap.get(tNode.data);
+        tNode.left = buildTreeUtil(inorder, preorder, start, index - 1);
+        tNode.right = buildTreeUtil(inorder, preorder, index + 1, end);
+
+        return tNode;
+
+    }
+
+    // public static TreeNode buildTreeUtil(int inorder[], int preorder[], int
+    // start, int end) {
+    // if (start > end)
+    // return null;
+
+    // TreeNode tNode = new TreeNode(preorder[curIndex++]);
+    // if (start == end) {
+    // return tNode;
+    // }
+
+    // int index = hMap.get(tNode.val);
+    // tNode.left = buildTreeUtil(inorder, preorder, start, index - 1);
+    // tNode.right = buildTreeUtil(inorder, preorder, index + 1, end);
+
+    // return tNode;
+
+    // }
+
+    // // Function to find the height of a binary tree.
+    // int height(Node node) {
+    // if (node == null)
+    // return 0;
+
+    // int left = height(node.left);
+    // int right = height(node.right);
+
+    // return Math.max(left, right) + 1;
+    // }
+
+    int diameter(Node root) {
+        res = 0;
+        height(root);
+        return res;
+    }
+
+    static int res = 0;
+
+    int height(Node node) {
+        if (node == null)
+            return 0;
+
+        int left = height(node.left);
+        int right = height(node.right);
+
+        res = Math.max(res, 1 + left + right);
+
+        return Math.max(left, right) + 1;
+    }
+
+    static ArrayList<Integer> topView(Node root) {
+        ArrayList<Integer> res = new ArrayList<>();
+        if (root == null)
+            return res;
+
+        Map<Integer, Node> hMap = new TreeMap<>();
+
+        Queue<Pair> qDeque = new LinkedList<>();
+        qDeque.add(new Pair(root, 0));
+
+        while (!qDeque.isEmpty()) {
+            Pair cur = qDeque.remove();
+
+            if (!hMap.containsKey(cur.vertix)) {
+                hMap.put(cur.vertix, cur.node);
+            }
+
+            if (cur.node.left != null) {
+                qDeque.add(new Pair(cur.node.left, cur.vertix - 1));
+            }
+
+            if (cur.node.right != null) {
+                qDeque.add(new Pair(cur.node.right, cur.vertix + 1));
+            }
+
+        }
+
+        for (Map.Entry<Integer, Node> pair : hMap.entrySet()) {
+            res.add(pair.getValue().data);
+        }
+
+        return res;
+    }
+
+    // Function to return a list containing the bottom view of the given tree.
+    public ArrayList<Integer> bottomView(Node root) {
+        // Code here
+        ArrayList<Integer> res = new ArrayList<>();
+        if (root == null)
+            return res;
+
+        Map<Integer, Node> hMap = new TreeMap<>();
+
+        Queue<Pair> qDeque = new LinkedList<>();
+        qDeque.add(new Pair(root, 0));
+
+        while (!qDeque.isEmpty()) {
+            Pair cur = qDeque.remove();
+
+            // if(!hMap.containsKey(cur.vertix)){
+            hMap.put(cur.vertix, cur.node);
+            // }
+
+            if (cur.node.left != null) {
+                qDeque.add(new Pair(cur.node.left, cur.vertix - 1));
+            }
+
+            if (cur.node.right != null) {
+                qDeque.add(new Pair(cur.node.right, cur.vertix + 1));
+            }
+
+        }
+
+        for (Map.Entry<Integer, Node> pair : hMap.entrySet()) {
+            res.add(pair.getValue().data);
+        }
+
+        return res;
+    }
+
+    public ArrayList<Integer> diagonal(Node root) {
+        ArrayList<Integer> res = new ArrayList<>();
+        if (root == null)
+            return res;
+
+        TreeMap<Integer, ArrayList<Integer>> map = new TreeMap<>();
+        diagonalUtil(root, 0, map);
+
+        for (Map.Entry<Integer, ArrayList<Integer>> mEntry : map.entrySet()) {
+            res.addAll(mEntry.getValue());
+        }
+
+        return res;
+    }
+
+    public static void diagonalUtil(Node root, int d, TreeMap<Integer, ArrayList<Integer>> map) {
+        if (root == null)
+            return;
+
+        ArrayList<Integer> list = map.get(d);
+        if (list == null) {
+            list = new ArrayList<>();
+        }
+        list.add(root.data);
+        map.put(d, list);
+        diagonalUtil(root.left, d + 1, map);
+        diagonalUtil(root.right, d, map);
+    }
+
+    /*
+     * First will print all the left boundary node
+     * Will print all the leaf nodes
+     * Print all the right boundary node
+     */
+    static ArrayList<Integer> resList;
+
+    ArrayList<Integer> boundary(Node node) {
+        resList = new ArrayList<>();
+        resList.add(node.data);
+        printAllBoundaryLeft(node.left);
+
+        printLeaves(node.left);
+        printLeaves(node.right);
+
+        printAllBoundaryRight(node.right);
+
+        return resList;
+    }
+
+    public static void printAllBoundaryLeft(Node node) {
+        if (node == null)
+            return;
+
+        if (node.left != null) {
+            resList.add(node.data);
+            printAllBoundaryLeft(node.left);
+        } else if (node.right != null) {
+            resList.add(node.data);
+            printAllBoundaryLeft(node.right);
+        }
+    }
+
+    public static void printAllBoundaryRight(Node node) {
+        if (node == null)
+            return;
+
+        if (node.right != null) {
+            printAllBoundaryRight(node.right);
+            resList.add(node.data);
+        } else if (node.left != null) {
+            printAllBoundaryRight(node.left);
+            resList.add(node.data);
+        }
+    }
+
+    public static void printLeaves(Node node) {
+        if (node == null) {
+            return;
+        }
+
+        printLeaves(node.left);
+        if (node.left == null && node.right == null)
+            resList.add(node.data);
+        printLeaves(node.right);
+    }
+}
+
+class Pair {
+    Node node;
+    int vertix;
+
+    public Pair(Node node, int vertix) {
+        this.node = node;
+        this.vertix = vertix;
     }
 
 }
