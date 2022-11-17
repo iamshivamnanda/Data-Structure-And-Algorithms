@@ -547,6 +547,125 @@ public class BinarySDESheet {
             resList.add(node.data);
         printLeaves(node.right);
     }
+
+    public static int findIndex(String str, int start, int end) {
+        if (start > end)
+            return -1;
+
+        ArrayDeque<Character> stack = new ArrayDeque<>();
+        for (int i = start; i <= end; i++) {
+            if (str.charAt(i) == '(') {
+                stack.push(str.charAt(i));
+            } else if (str.charAt(i) == ')') {
+                if (stack.peek() == '(') {
+                    stack.pop();
+
+                    if (stack.isEmpty()) {
+                        return i;
+                    }
+                }
+            }
+        }
+        return -1;
+    }
+
+    public static Node constructTreeFromString(String str, int start, int end) {
+        if (start > end)
+            return null;
+
+        int num = 0;
+        while (start <= end && str.charAt(start) >= '0' && str.charAt(end) < '9') {
+            num *= 10;
+            num += str.charAt(start) - '0';
+            start++;
+        }
+        start--;
+        Node root = new Node(num);
+        int index = -1;
+
+        if (start + 1 <= end && str.charAt(start + 1) == '(')
+            index = findIndex(str, start, end);
+
+        if (index != -1) {
+            root.left = constructTreeFromString(str, start + 2, index - 1);
+            root.right = constructTreeFromString(str, index + 2, end - 1);
+        }
+
+        return root;
+    }
+
+    /* This function is here just to test */
+    static void preOrder(Node node) {
+        if (node == null)
+            return;
+        System.out.printf("%d ", node.data);
+        preOrder(node.left);
+        preOrder(node.right);
+    }
+
+    public static int minSwapsUtil(ArrayList<Integer> inorderList) {
+        int n = inorderList.size();
+        // pair first element is value and second is its original index
+        ArrayList<Pair2> pArrayList = new ArrayList<>();
+        for (int i = 0; i < n; i++) 
+            pArrayList.add(new Pair2(inorderList.get(i), i));
+
+
+        pArrayList.sort(new Comparator<Pair2>() {
+
+            @Override
+            public int compare(Pair2 o1, Pair2 o2) {
+                return o1.value - o2.value;
+            }            
+        });
+
+        boolean vis[] = new boolean[n];
+        int ans = 0;
+
+        for (int i = 0; i < n; i++) {
+            if(vis[i] || pArrayList.get(i).value == i) // or if(vis[i] || pArrayList.get(i).index == i)
+                continue;
+
+            int cycle_size = 0;
+            int j = i;
+            while (!vis[j]) {
+                vis[j] = true;
+                j = pArrayList.get(j).index;
+                cycle_size++;
+            }
+
+            if (cycle_size > 0){
+                ans += cycle_size -1;
+            }
+        }
+        return ans;
+    }
+
+    public static int minSwaps(int n, int[] A) {
+        ArrayList<Integer> inordIntegers = new ArrayList<>();
+        inorder(n, A, 0, inordIntegers); 
+        return minSwapsUtil(inordIntegers);
+
+    }
+
+    public static void inorder(int n , int[] A, int index, ArrayList<Integer> list) {
+        if(index >= n)
+            return;
+        
+        inorder(n, A, 2* index + 1, list);
+        list.add(A[index]);
+        inorder(n, A, 2* index + 2, list);
+
+    }
+
+    public static void main(String[] args) {
+        String str = "4(2(3)(1))(6(5))";
+        Node root = constructTreeFromString(str, 0, str.length() - 1);
+        preOrder(root);
+    }
+
+    public BinarySDESheet() {
+    }
 }
 
 class Pair {
@@ -557,5 +676,13 @@ class Pair {
         this.node = node;
         this.vertix = vertix;
     }
+}
 
+class Pair2 {
+    int value;
+    int index;
+    public Pair2(int value, int index) {
+        this.value = value;
+        this.index = index;
+    }
 }
