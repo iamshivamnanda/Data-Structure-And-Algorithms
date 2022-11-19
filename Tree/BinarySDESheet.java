@@ -607,23 +607,22 @@ public class BinarySDESheet {
         int n = inorderList.size();
         // pair first element is value and second is its original index
         ArrayList<Pair2> pArrayList = new ArrayList<>();
-        for (int i = 0; i < n; i++) 
+        for (int i = 0; i < n; i++)
             pArrayList.add(new Pair2(inorderList.get(i), i));
-
 
         pArrayList.sort(new Comparator<Pair2>() {
 
             @Override
             public int compare(Pair2 o1, Pair2 o2) {
                 return o1.value - o2.value;
-            }            
+            }
         });
 
         boolean vis[] = new boolean[n];
         int ans = 0;
 
         for (int i = 0; i < n; i++) {
-            if(vis[i] || pArrayList.get(i).value == i) // or if(vis[i] || pArrayList.get(i).index == i)
+            if (vis[i] || pArrayList.get(i).value == i) // or if(vis[i] || pArrayList.get(i).index == i)
                 continue;
 
             int cycle_size = 0;
@@ -634,8 +633,8 @@ public class BinarySDESheet {
                 cycle_size++;
             }
 
-            if (cycle_size > 0){
-                ans += cycle_size -1;
+            if (cycle_size > 0) {
+                ans += cycle_size - 1;
             }
         }
         return ans;
@@ -643,28 +642,98 @@ public class BinarySDESheet {
 
     public static int minSwaps(int n, int[] A) {
         ArrayList<Integer> inordIntegers = new ArrayList<>();
-        inorder(n, A, 0, inordIntegers); 
+        inorder(n, A, 0, inordIntegers);
         return minSwapsUtil(inordIntegers);
 
     }
 
-    public static void inorder(int n , int[] A, int index, ArrayList<Integer> list) {
-        if(index >= n)
+    public static void inorder(int n, int[] A, int index, ArrayList<Integer> list) {
+        if (index >= n)
             return;
-        
-        inorder(n, A, 2* index + 1, list);
-        list.add(A[index]);
-        inorder(n, A, 2* index + 2, list);
 
+        inorder(n, A, 2 * index + 1, list);
+        list.add(A[index]);
+        inorder(n, A, 2 * index + 2, list);
+
+    }
+
+    // we will using hashing to find the duplicates
+    int dupSub(Node root) {
+        HashSet<String> hSet = new HashSet<>();
+        String res = dupSubUtil(root, hSet);
+        if (res.equals("")) {
+            return 1;
+        } else {
+            return 0;
+        }
+    }
+
+    static String MARKER = "$";
+
+    public static String dupSubUtil(Node root, HashSet<String> hSet) {
+        String s = "";
+        if (root == null)
+            return s + MARKER;
+
+        String leftS = dupSubUtil(root.left, hSet);
+        if (leftS.equals(s))
+            return s;
+
+        String rightS = dupSubUtil(root.right, hSet);
+        if (rightS.equals(s))
+            return s;
+
+        s = s + root.data + leftS + rightS;
+
+        if (s.length() > 3 && hSet.contains(s))
+            return "";
+
+        hSet.add(s);
+        return s;
+    }
+
+    // Function to return the lowest common ancestor in a Binary Tree.
+    Node lca(Node root, int n1, int n2) {
+        if (root == null || root.data == n1 || root.data == n2)
+            return root;
+
+        Node lNode = lca(root.left, n1, n2);
+        Node rNode = lca(root.right, n1, n2);
+
+        if (lNode == null) {
+            return rNode;
+        } else if (rNode == null) {
+            return lNode;
+        } else {
+            return root;
+        }
     }
 
     public static void main(String[] args) {
-        String str = "4(2(3)(1))(6(5))";
-        Node root = constructTreeFromString(str, 0, str.length() - 1);
-        preOrder(root);
-    }
+        // String str = "4(2(3)(1))(6(5))";
+        // Node root = constructTreeFromString(str, 0, str.length() - 1);
+        // preOrder(root);
 
-    public BinarySDESheet() {
+        Graph g1 = new Graph(5);
+        g1.addEdge(1, 0);
+        g1.addEdge(0, 2);
+        g1.addEdge(0, 3);
+        g1.addEdge(3, 4);
+        if (g1.isTree())
+            System.out.println("Graph is Tree");
+        else
+            System.out.println("Graph is not Tree");
+
+        Graph g2 = new Graph(5);
+        g2.addEdge(1, 0);
+        g2.addEdge(0, 2);
+        g2.addEdge(2, 1);
+        g2.addEdge(0, 3);
+        g2.addEdge(3, 4);
+        if (g2.isTree())
+            System.out.println("Graph is Tree");
+        else
+            System.out.println("Graph is not Tree");
     }
 }
 
@@ -681,8 +750,63 @@ class Pair {
 class Pair2 {
     int value;
     int index;
+
     public Pair2(int value, int index) {
         this.value = value;
         this.index = index;
+    }
+}
+
+class Graph {
+    public static int V; // No. of vertices
+    public static int E; // No. of edges
+    public static ArrayList<ArrayList<Integer>> adj; // Pointer to an array for adjacency lists
+
+    // Constructor
+    public Graph(int V) {
+        E = 0;
+        this.V = V;
+        adj = new ArrayList<ArrayList<Integer>>(V);
+        for (int i = 0; i < V; i++)
+            adj.add(new ArrayList<Integer>());
+    }
+
+    // A recursive dfs function that uses visited[] and
+    // parent to traverse the graph and mark visited[v] to
+    // true for visited nodes
+    static void dfsTraversal(int v, boolean[] visited, int parent) {
+        visited[v] = true;
+
+        for (Integer b : adj.get(v)) {
+            if (!visited[b]) {
+                dfsTraversal(b, visited, v);
+            }
+        }
+
+    }
+
+    // to add an edge to graph
+    public static void addEdge(int v, int w) {
+        E++; // increase the number of edges
+        adj.get(w).add(v); // Add w to v list.
+        adj.get(v).add(w); // Add v to w list.
+    }
+
+    // Returns true if the graph is connected, else false.
+    public static boolean isConnected() {
+        boolean visited[] = new boolean[V];
+
+        dfsTraversal(0, visited, -1);
+
+        for (int i = 0; i < V; i++) {
+            if (!visited[i])
+                return false;
+        }
+
+        return true;
+    }
+
+    public static boolean isTree() {
+        return E == V - 1 && isConnected();
     }
 }
