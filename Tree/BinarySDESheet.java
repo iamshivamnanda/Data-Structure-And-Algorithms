@@ -709,31 +709,150 @@ public class BinarySDESheet {
         }
     }
 
+    int LCA_DISTANCE(Node root, int a) {
+        if (root == null)
+            return 0;
+
+        if (root.data == a)
+            return 1;
+
+        int leftValue = LCA_DISTANCE(root.left, a);
+        int rightValue = LCA_DISTANCE(root.right, a);
+
+        if (leftValue == 0 && rightValue == 0)
+            return 0;
+
+        return leftValue + rightValue + 1;
+    }
+
+    int findDist(Node root, int a, int b) {
+        Node lca = lca(root, a, b);
+
+        int LeftDistance = LCA_DISTANCE(lca, a);
+        int rightDistance = LCA_DISTANCE(lca, b);
+
+        return LeftDistance + rightDistance - 2;
+    }
+
+    static String printAllDupsUtil(Node root, ArrayList<Node> list, HashMap<String, Integer> hashMap) {
+        if (root == null)
+            return "N";
+
+        String s = root.data + "_" + printAllDupsUtil(root.left, list, hashMap) + "_"
+                + printAllDupsUtil(root.right, list, hashMap);
+        if (hashMap.getOrDefault(s, 0) == 1) {
+            list.add(root);
+        }
+        hashMap.put(s, hashMap.getOrDefault(s, 0) + 1);
+
+        return s;
+    }
+
+    public List<Node> printAllDups(Node root) {
+        ArrayList<Node> list = new ArrayList<>();
+        HashMap<String, Integer> hashMap = new HashMap<>();
+        printAllDupsUtil(root, list, hashMap);
+        Collections.sort(list, new Comparator<Node>() {
+
+            @Override
+            public int compare(Node o1, Node o2) {
+                // TODO Auto-generated method stub
+                return o1.data - o2.data;
+            }
+
+        });
+        return list;
+    }
+
+    static int k = 3;
+
+    public static Node kthAnchester(Node root, int node) {
+        if (root == null)
+            return null;
+
+        if (root.data == node || kthAnchester(root.left, node) != null || kthAnchester(root.right, node) != null) {
+            if (k > 0) {
+                k--;
+            } else if (k == 0) {
+                System.out.println("Kth Anchester is " + root.data);
+                return null;
+            }
+            return root;
+        }
+        return null;
+    }
+
+    static int result = Integer.MIN_VALUE;
+
+    public int maxPathSum(TreeNode root) {
+        result = Integer.MIN_VALUE;
+        maxPathSumUtil(root);
+        return result;
+    }
+
+    static int maxPathSumUtil(TreeNode root) {
+        if (root == null)
+            return 0;
+
+        int l = maxPathSumUtil(root.left);
+        int r = maxPathSumUtil(root.right);
+
+        int max_single = Math.max(Math.max(l, r) + root.val, root.val);
+
+        int max_top = Math.max(max_single, l + r + root.val);
+
+        result = Math.max(result, max_top);
+
+        return max_single;
+    }
+
+    int findMaxSum(Node node) {
+        result = Integer.MIN_VALUE;
+        findMaxSumUtil(node);
+        return result;
+    }
+
+    static int findMaxSumUtil(Node root) {
+        if (root == null)
+            return 0;
+
+        int l = findMaxSumUtil(root.left);
+        int r = findMaxSumUtil(root.right);
+
+        int max_single = Math.max(Math.max(l, r) + root.data, root.data);
+
+        int max_top = Math.max(max_single, l + r + root.data);
+
+        result = Math.max(result, max_top);
+
+        return max_single;
+    }
+
     public static void main(String[] args) {
         // String str = "4(2(3)(1))(6(5))";
         // Node root = constructTreeFromString(str, 0, str.length() - 1);
         // preOrder(root);
 
-        Graph g1 = new Graph(5);
-        g1.addEdge(1, 0);
-        g1.addEdge(0, 2);
-        g1.addEdge(0, 3);
-        g1.addEdge(3, 4);
-        if (g1.isTree())
-            System.out.println("Graph is Tree");
-        else
-            System.out.println("Graph is not Tree");
+        // Graph g1 = new Graph(5);
+        // g1.addEdge(1, 0);
+        // g1.addEdge(0, 2);
+        // g1.addEdge(0, 3);
+        // g1.addEdge(3, 4);
+        // if (g1.isTree())
+        // System.out.println("Graph is Tree");
+        // else
+        // System.out.println("Graph is not Tree");
 
-        Graph g2 = new Graph(5);
-        g2.addEdge(1, 0);
-        g2.addEdge(0, 2);
-        g2.addEdge(2, 1);
-        g2.addEdge(0, 3);
-        g2.addEdge(3, 4);
-        if (g2.isTree())
-            System.out.println("Graph is Tree");
-        else
-            System.out.println("Graph is not Tree");
+        // Graph g2 = new Graph(5);
+        // g2.addEdge(1, 0);
+        // g2.addEdge(0, 2);
+        // g2.addEdge(2, 1);
+        // g2.addEdge(0, 3);
+        // g2.addEdge(3, 4);
+        // if (g2.isTree())
+        // System.out.println("Graph is Tree");
+        // else
+        // System.out.println("Graph is not Tree");
     }
 }
 
@@ -808,5 +927,52 @@ class Graph {
 
     public static boolean isTree() {
         return E == V - 1 && isConnected();
+    }
+}
+
+class Codec {
+
+    // Encodes a tree to a single string.
+    public String serialize(TreeNode root) {
+        String str = "";
+        ArrayList<String> list = new ArrayList<>();
+        traverse(root, list);
+        for (String s : list) {
+            str += s;
+        }
+        return str;
+
+    }
+
+    static void traverse(TreeNode root, ArrayList<String> list) {
+        if (root == null) {
+            list.add("#" + ",");
+            return;
+        }
+        list.add(root.val + ",");
+        traverse(root.left, list);
+        traverse(root.right, list);
+    }
+
+    // Decodes your encoded data to tree.
+    public TreeNode deserialize(String data) {
+        String[] arr = data.split(",");
+        ArrayDeque<String> q = new ArrayDeque<>();
+        for (String s : arr) {
+            q.add(s);
+        }
+        TreeNode root = helper(q);
+        return root;
+    }
+
+    static TreeNode helper(ArrayDeque<String> q) {
+        String str = q.poll();
+        if (str.equals("#"))
+            return null;
+
+        TreeNode root = new TreeNode(Integer.parseInt(str));
+        root.left = helper(q);
+        root.right = helper(q);
+        return root;
     }
 }
