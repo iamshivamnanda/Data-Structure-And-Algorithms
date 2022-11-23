@@ -828,6 +828,56 @@ public class BinarySDESheet {
         return max_single;
     }
 
+    Node prev = null;
+
+    // Function to convert binary tree to doubly linked list and return it.
+    Node bToDLL(Node root) {
+        if (root == null)
+            return null;
+
+        Node head = bToDLL(root.left);
+        if (prev == null) {
+            head = root;
+        } else {
+            root.left = prev;
+            prev.right = root;
+        }
+        prev = root;
+        bToDLL(root.right);
+        return head;
+
+    }
+
+    // path from root to leaf
+    static ArrayList<ArrayList<Integer>> rList;
+
+    public static ArrayList<ArrayList<Integer>> printPaths(Node root, int sum) {
+        rList = new ArrayList<>();
+        ArrayList<Integer> Path = new ArrayList<>();
+        printPathsUtil(root, sum, 0, Path);
+        return rList;
+    }
+
+    public static void printPathsUtil(Node root, int sum, int sumSoFar, ArrayList<Integer> Path) {
+        if (root == null) {
+            return;
+        }
+        sumSoFar += root.data;
+        Path.add(root.data);
+
+        if (sumSoFar == sum) {
+            rList.add(new ArrayList<>(Path));
+        }
+        if (root.left != null) {
+            printPathsUtil(root.left, sum, sumSoFar, Path);
+        }
+        if (root.right != null) {
+            printPathsUtil(root.right, sum, sumSoFar, Path);
+        }
+
+        Path.remove(Path.size() - 1);
+    }
+
     public static void main(String[] args) {
         // String str = "4(2(3)(1))(6(5))";
         // Node root = constructTreeFromString(str, 0, str.length() - 1);
