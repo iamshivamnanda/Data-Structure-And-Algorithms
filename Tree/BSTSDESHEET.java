@@ -346,5 +346,96 @@ public class BSTSDESHEET {
             root.val = suc.val;
             return root;
         }
+
+    }
+
+    // Function to count number of nodes in BST that lie in the given range.
+    int getCount(Node root, int l, int h) {
+        count = 0;
+        getCountUtil(root, l, h);
+        return count;
+    }
+
+    static int count = 0;
+
+    void getCountUtil(Node root, int l, int h) {
+        if (root == null)
+            return;
+
+        getCountUtil(root.left, l, h);
+        if (root.data >= l && root.data <= h)
+            count++;
+        getCountUtil(root.right, l, h);
+    }
+
+    static int index = 0;
+
+    public static Node post_order(int pre[], int size) {
+        index = 0;
+        return postOrderUtil(pre, size, Integer.MIN_VALUE, Integer.MAX_VALUE);
+    }
+
+    public static Node postOrderUtil(int pre[], int size, int min, int max) {
+        if (index >= size)
+            return null;
+
+        int val = pre[index];
+        if (val < min || val > max)
+            return null;
+        index++;
+        Node node = new Node(val);
+        node.left = postOrderUtil(pre, size, min, val);
+        node.right = postOrderUtil(pre, size, val, max);
+
+        return node;
+    }
+
+    public void populateNext(Node root) {
+        ArrayList<Node> list = new ArrayList<>();
+        inorderpopulateNext(root, list);
+        for (int i = 0; i < list.size() - 1; i++) {
+            Node curr = list.get(i);
+            Node next = list.get(i + 1);
+            curr.next = next;
+        }
+        Node endNode = new Node(-1);
+        Node curr = list.get(list.size() - 1);
+        curr.next = endNode;
+        return root;
+    }
+
+    public static void inorderpopulateNext(Node root, ArrayList<Node> list) {
+        if (root == null)
+            return;
+
+        inorderpopulateNext(root.left, list);
+        list.add(root);
+        inorderpopulateNext(root.right, list);
+    }
+
+    Node buildBalancedTree(Node root) {
+        ArrayList<Integer> list = new ArrayList<>();
+        storeContent(root, list);
+        return genereateBalanceBinaryTree(list, 0, list.size() - 1);
+    }
+
+    public static void storeContent(Node root, ArrayList<Integer> list) {
+        if (root == null)
+            return;
+
+        storeContent(root.left, list);
+        list.add(root.data);
+        storeContent(root.right, list);
+    }
+
+    public static Node genereateBalanceBinaryTree(ArrayList<Integer> list, int low, int high) {
+        if (low > high)
+            return null;
+
+        int mid = (low + high) / 2;
+        Node node = new Node(list.get(mid));
+        node.left = genereateBalanceBinaryTree(list, low, mid - 1);
+        node.right = genereateBalanceBinaryTree(list, mid + 1, high);
+        return node;
     }
 }
