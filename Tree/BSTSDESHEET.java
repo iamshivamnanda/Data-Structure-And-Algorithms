@@ -1,9 +1,11 @@
 package Tree;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 
 public class BSTSDESHEET {
     // as it is a binary tree so we will use binary search
@@ -436,6 +438,157 @@ public class BSTSDESHEET {
         Node node = new Node(list.get(mid));
         node.left = genereateBalanceBinaryTree(list, low, mid - 1);
         node.right = genereateBalanceBinaryTree(list, mid + 1, high);
+        return node;
+    }
+
+    public static ArrayList<Integer> findLeastGreater(int n, int[] arr) {
+        ArrayList<Integer> res = new ArrayList<>(n);
+        for (int i = 0; i < n; i++) {
+            res.add(arr[i]);
+        }
+        BinarySearchTree tree = new BinarySearchTree();
+        for (int i = n - 1; i >= 0; i--) {
+            tree.succ = null;
+            tree.root = tree.insert(tree.root, arr[i]);
+            if (tree.succ != null) {
+                res.set(i, tree.succ.data);
+            } else {
+                res.set(i, -1);
+            }
+        }
+        return res;
+    }
+
+    // Return the size of the largest sub-tree which is also a BST
+    static int largestBst(Node root) {
+
+        int res[] = largestBstUtil(root);
+        return res[0];
+
+    }
+
+    // [size, min, max, isBst]
+    public static int[] largestBstUtil(Node root) {
+        if (root == null) {
+            int res[] = { 0, Integer.MAX_VALUE, Integer.MIN_VALUE, 1 };
+            return res;
+        }
+
+        int left[] = largestBstUtil(root.left);
+        int right[] = largestBstUtil(root.right);
+
+        int min = Math.min(root.data, left[1]);
+        int max = Math.max(root.data, right[2]);
+        boolean isBst = left[3] == 1 && right[3] == 1 && root.data > left[2] && root.data < right[1];
+        int isBstVal = isBst ? 1 : 0;
+        int size = 0;
+        if (isBst) {
+            size = 1 + left[0] + right[0];
+        } else {
+            size = Math.max(left[0], right[0]);
+        }
+        int res[] = { size, min, max, isBstVal };
+        return res;
+    }
+
+    static int countNode = 0;
+
+    public static float findMedian(Node root) {
+        countNode = 0;
+        countNodeUtil(root);
+        int curCount = 0;
+        Node prev = null;
+        if (root == null)
+            return -1;
+
+        while (root != null) {
+            if (root.left != null) {
+                Node pre = root.left;
+                while (pre.right != null && pre.right != root)
+                    pre = pre.right;
+
+                if (pre.right == null) {
+                    pre.right = root;
+                    root = root.left;
+                } else {
+                    pre.right = null;
+                    curCount++;
+
+                    // if odd
+                    if (countNode % 2 != 0 && curCount == (countNode + 1) / 2) {
+                        return root.data;
+                    }
+                    // if even
+                    if (countNode % 2 == 0 && curCount == (countNode/ 2) +1) {
+                        return (float)(prev.data + root.data) / 2;
+                    }
+                    prev = root;
+                    root = root.right;
+                }
+            } else {
+                curCount++;
+                // if odd
+                if (countNode % 2 != 0 && curCount == (countNode + 1) / 2) {
+                    return root.data;
+                }
+                // if even
+                if (countNode % 2 == 0 && curCount == (countNode/ 2) +1 ) {
+                    return  (float)(prev.data + root.data) / 2;
+                }
+                prev = root;
+                root = root.right;
+            }
+        }
+        return -1;
+    }
+
+    public static void countNodeUtil(Node root) {
+        if (root == null)
+            return;
+
+        while (root != null) {
+            if (root.left != null) {
+                Node pre = root.left;
+                while (pre.right != null && pre.right != root)
+                    pre = pre.right;
+
+                if (pre.right == null) {
+                    pre.right = root;
+                    root = root.left;
+                } else {
+                    pre.right = null;
+                    countNode++;
+                    root = root.right;
+                }
+            } else {
+                countNode++;
+                root = root.right;
+            }
+        }
+    }
+}
+
+class BinarySearchTree {
+    static Node root;
+    static Node succ;
+
+    BinarySearchTree() {
+        root = null;
+        succ = null;
+    }
+
+    Node insert(Node node, int data) {
+        if (node == null) {
+            node = new Node(data);
+            return node;
+        }
+
+        if (node.data > data) {
+            succ = node;
+            node.left = insert(node.left, data);
+        } else if (node.data < data) {
+            node.right = insert(node.right, data);
+        }
         return node;
     }
 }
