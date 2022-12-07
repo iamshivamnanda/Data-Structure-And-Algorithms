@@ -519,8 +519,8 @@ public class BSTSDESHEET {
                         return root.data;
                     }
                     // if even
-                    if (countNode % 2 == 0 && curCount == (countNode/ 2) +1) {
-                        return (float)(prev.data + root.data) / 2;
+                    if (countNode % 2 == 0 && curCount == (countNode / 2) + 1) {
+                        return (float) (prev.data + root.data) / 2;
                     }
                     prev = root;
                     root = root.right;
@@ -532,8 +532,8 @@ public class BSTSDESHEET {
                     return root.data;
                 }
                 // if even
-                if (countNode % 2 == 0 && curCount == (countNode/ 2) +1 ) {
-                    return  (float)(prev.data + root.data) / 2;
+                if (countNode % 2 == 0 && curCount == (countNode / 2) + 1) {
+                    return (float) (prev.data + root.data) / 2;
                 }
                 prev = root;
                 root = root.right;
@@ -565,6 +565,18 @@ public class BSTSDESHEET {
                 root = root.right;
             }
         }
+    }
+
+    long minDiff(long a[], int N, int K) {
+        long res = Long.MAX_VALUE;
+        Arrays.sort(a);
+
+        for (int i = 0; i < N - K; i++) {
+            res = Math.min(res, a[i + K] - a[i]);
+        }
+
+        return res;
+
     }
 }
 
