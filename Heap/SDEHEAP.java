@@ -1,8 +1,9 @@
 package Heap;
 
-import java.util.ArrayDeque;
-import java.util.HashMap;
-import java.util.PriorityQueue;
+import java.util.*;
+import java.util.Map.Entry;
+
+import LinkedList.LinkedListSDEsheet.ListNode;
 
 public class SDEHEAP {
 
@@ -210,12 +211,11 @@ public class SDEHEAP {
         return res;
     }
 
-    //Function to return the minimum cost of connecting the ropes.
-    long minCost(long arr[], int n) 
-    {
-        long res  = 0;
+    // Function to return the minimum cost of connecting the ropes.
+    long minCost(long arr[], int n) {
+        long res = 0;
         PriorityQueue<Long> minHeap = new PriorityQueue<>();
-        for (int i = 0; i < arr.length; i++) 
+        for (int i = 0; i < arr.length; i++)
             minHeap.add(arr[i]);
 
         while (minHeap.size() >= 2) {
@@ -228,8 +228,170 @@ public class SDEHEAP {
         return res;
     }
 
+    public List<String> findItinerary(List<List<String>> tickets) {
+        List<String> res = new ArrayList<>();
+        HashMap<String, String> reveMap = new HashMap<>();
+        HashMap<String, String> ticketsmap = new HashMap<>();
+        for (List<String> list : tickets) {
+            reveMap.put(list.get(1), list.get(0));
+            ticketsmap.put(list.get(0), list.get(1));
+        }
+        String start = null;
+        for (List<String> list : tickets) {
+            if (!reveMap.containsKey(list.get(0))) {
+                start = list.get(0);
+                break;
+            }
+        }
+        while (start != null) {
+            res.add(start);
+            start = ticketsmap.get(start);
+        }
+        return res;
+
+    }
+
+    int maxLen(int arr[], int n) {
+        HashMap<Integer, Integer> sums = new HashMap<>();
+        int max_len = 0;
+        int sum = 0;
+        for (int i = 0; i < arr.length; i++) {
+            sum += arr[i];
+
+            if (sum == 0) {
+                max_len = Math.max(max_len, i + 1);
+            } else if (sums.containsKey(sum)) {
+                max_len = Math.max(max_len, i - sums.get(sum));
+            } else {
+                sums.put(sum, i);
+            }
+        }
+
+        return max_len;
+    }
+
+    ArrayList<Integer> countDistinct(int A[], int n, int k) {
+        // key -> no , val -> count
+        HashMap<Integer, Integer> map = new HashMap<>();
+
+        ArrayList<Integer> res = new ArrayList<>();
+
+        for (int i = 0; i < k; i++) {
+            map.put(A[i], map.getOrDefault(A[i], 0) + 1);
+        }
+        res.add(map.size());
+
+        int start = 0;
+        for (int i = k; i < A.length; i++) {
+            if (map.get(A[start]) == 1) {
+                map.remove(A[start]);
+            } else {
+                map.put(A[start], map.get(A[start]) - 1);
+            }
+            start++;
+            map.put(A[i], map.getOrDefault(A[i], 0) + 1);
+
+            res.add(map.size());
+        }
+        return res;
+    }
+
+    public static String getDifString(String str) {
+        StringBuilder shift = new StringBuilder();
+        for (int i = 1; i < str.length(); i++) {
+            int dif = str.charAt(i) - str.charAt(i - 1);
+            if (dif < 0)
+                dif += 26;
+
+            shift.append(dif + 'a');
+        }
+        return shift.toString();
+    }
+
+    public static void groupShiftedString(String str[], int n) {
+        HashMap<String, ArrayList<Integer>> groupStrings = new HashMap<>();
+
+        for (int i = 0; i < str.length; i++) {
+            String difString = getDifString(str[i]);
+            if (groupStrings.containsKey(difString)) {
+                groupStrings.get(difString).add(i);
+            } else {
+                ArrayList<Integer> list = new ArrayList<>();
+                list.add(i);
+                groupStrings.put(difString, list);
+            }
+        }
+
+        for (Entry<String, ArrayList<Integer>> mapEntry : groupStrings.entrySet()) {
+            ArrayList<Integer> list = mapEntry.getValue();
+            for (Integer integer : list) {
+                System.out.print(str[integer] + " ");
+            }
+            System.out.println();
+        }
+    }
+
+    public static ListNode mergeTwoLists(ListNode l1, ListNode l2) {
+        ListNode head = new ListNode(0);
+        ListNode curr = head;
+
+        while (l1 != null && l2 != null) {
+            if (l1.val < l2.val) {
+                curr.next = l1;
+                l1 = l1.next;
+                curr = curr.next;
+            } else {
+                curr.next = l2;
+                l2 = l2.next;
+                curr = curr.next;
+            }
+        }
+        if (l1 != null) {
+            curr.next = l1;
+        } else if (l2 != null) {
+            curr.next = l2;
+        }
+
+        return head.next;
+    }
+
+    public ListNode mergeKLists(ListNode[] lists) {
+        int n = lists.length;
+        int interval = 1;
+        while (interval < n) {
+            for (int i = 0; i < n - interval; i = i + interval * 2) {
+                lists[i] = mergeTwoLists(lists[i], lists[i + interval]);
+            }
+            interval = interval * 2;
+        }
+        return n > 0 ? lists[0] : null;
+    }
+
     public static void main(String[] args) {
-        print(12);
+        // print(12);
+        String str[] = { "acd", "dfg", "wyz", "yab", "mop",
+                "bdfh", "a", "x", "moqs"
+        };
+        groupShiftedString(str, str.length);
+    }
+
+    static ArrayList<Integer> max_of_subarrays(int arr[], int n, int k) {
+        PriorityQueue<Integer> maxHeap = new PriorityQueue<>(
+                (Integer o1, Integer o2) -> arr[o2] - arr[o1]);
+
+        for (int i = 0; i < k; i++) {
+            maxHeap.add(i);
+        }
+
+        ArrayList<Integer> res = new ArrayList<>();
+        res.add(arr[maxHeap.peek()]);
+        int start = 0;
+        for (int i = k; i < arr.length; i++) {
+            maxHeap.remove(start++);
+            maxHeap.add(i);
+            res.add(arr[maxHeap.peek()]);
+        }
+        return res;
     }
 
 }
