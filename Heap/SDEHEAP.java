@@ -367,14 +367,6 @@ public class SDEHEAP {
         return n > 0 ? lists[0] : null;
     }
 
-    public static void main(String[] args) {
-        // print(12);
-        String str[] = { "acd", "dfg", "wyz", "yab", "mop",
-                "bdfh", "a", "x", "moqs"
-        };
-        groupShiftedString(str, str.length);
-    }
-
     static ArrayList<Integer> max_of_subarrays(int arr[], int n, int k) {
         PriorityQueue<Integer> maxHeap = new PriorityQueue<>(
                 (Integer o1, Integer o2) -> arr[o2] - arr[o1]);
@@ -394,4 +386,308 @@ public class SDEHEAP {
         return res;
     }
 
+    // invalid solutiuon
+    int[] findSurpasser2(int[] arr, int n) {
+        int res[] = new int[n];
+        PriorityQueue<Integer> maxHeap = new PriorityQueue<>(
+                (Integer o1, Integer o2) -> arr[o2] - arr[o1]);
+        maxHeap.add(n - 1);
+        res[n - 1] = 0;
+        for (int i = n - 2; i >= 0; i--) {
+            int count = 0;
+            if (!maxHeap.isEmpty() && arr[i] < arr[maxHeap.peek()]) {
+                System.out.println(maxHeap.toString());
+                while (!maxHeap.isEmpty() && arr[maxHeap.peek()] > arr[i]) {
+                    count++;
+                    maxHeap.poll();
+                }
+            }
+            if (arr[i] < arr[i + 1]) {
+                count += res[i + 1];
+            }
+            res[i] = count;
+            maxHeap.add(i);
+        }
+
+        return res;
+
+    }
+
+    public static int segregeatePositiveNo(int arr[]) {
+        int j = 0;
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] <= 0) {
+                int temp = arr[j];
+                arr[j] = arr[i];
+                arr[i] = temp;
+                j++;
+            }
+        }
+        return j;
+    }
+
+    public static int findMissingPosNo(int arr[]) {
+        for (int i = 0; i < arr.length; i++) {
+            int x = Math.abs(arr[i]);
+
+            if (arr[x - 1] > 0 && x - 1 < arr.length) {
+                arr[x - 1] = -arr[x - 1];
+            }
+        }
+
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i] > 0) {
+                return i + 1;
+            }
+        }
+
+        return arr.length + 1;
+    }
+
+    // Function to find the smallest positive number missing from the array.
+    static int missingNumber(int arr[], int size) {
+        int shift = segregeatePositiveNo(arr);
+        int arr2[] = new int[size - shift];
+        int j = 0;
+        for (int i = shift; i < arr.length; i++) {
+            arr2[j++] = arr[i];
+        }
+
+        return findMissingPosNo(arr2);
+    }
+
+    // public static void merge(int arr[], int l, int m, int h, HashMap<Integer,
+    // Integer> hMap) {
+    // int left[] = Arrays.copyOfRange(arr, l, m + 1);
+    // int right[] = Arrays.copyOfRange(arr, m + 1, h + 1);
+
+    // int i = 0;
+    // int j = 0;
+    // int k = l;
+    // int count = 0;
+
+    // while (i < left.length && j < right.length) {
+    // if (left[i] <= right[i]) {
+    // hMap.put(left[i], hMap.getOrDefault(left[i], 0) + count);
+    // arr[k++] = left[i++];
+    // } else {
+    // arr[k++] = right[j++];
+    // count++;
+    // }
+    // }
+
+    // while (i < left.length) {
+    // hMap.put(left[i], count);
+    // arr[k++] = left[i++];
+    // }
+
+    // while (j < right.length) {
+    // arr[k++] = right[i++];
+    // }
+
+    // }
+
+    // public static void mergeSort(int arr[], int l, int h, HashMap<Integer,
+    // Integer> hMap) {
+    // if (l < h) {
+    // int mid = l + (h - l) / 2;
+    // mergeSort(arr, l, mid, hMap);
+    // mergeSort(arr, mid + 1, h, hMap);
+    // merge(arr, l, mid, h, hMap);
+    // }
+    // }
+
+    // int[] findSurpasser(int[] arr, int n) {
+    // HashMap<Integer, Integer> hMap = new HashMap<>();
+    // int dup[] = Arrays.copyOf(arr, n);
+    // mergeSort(arr, 0, n - 1, hMap);
+
+    // for (int i = 0; i < dup.length; i++) {
+    // dup[i] = n - i - hMap.getOrDefault(arr[i], 0);
+    // }
+    // return dup;
+
+    // }
+
+    public static void merge(int arr[], int l, int m, int h, HashMap<Integer, Integer> hMap, int ans[]) {
+        int left[] = Arrays.copyOfRange(arr, l, m + 1);
+        int right[] = Arrays.copyOfRange(arr, m + 1, h + 1);
+
+        int i = 0;
+        int j = 0;
+        int k = l;
+
+        while (i < left.length && j < right.length) {
+            if (left[i] < right[j]) {
+                ans[hMap.get(left[i])] += right.length - j;
+                arr[k++] = left[i++];
+            } else {
+                arr[k++] = right[j++];
+            }
+        }
+
+        while (i < left.length) {
+            arr[k++] = left[i++];
+        }
+
+        while (j < right.length) {
+            arr[k++] = right[j++];
+        }
+
+    }
+
+    public static void mergeSort(int arr[], int l, int h, HashMap<Integer, Integer> hMap, int ans[]) {
+        if (l < h) {
+            int mid = l + (h - l) / 2;
+            mergeSort(arr, l, mid, hMap, ans);
+            mergeSort(arr, mid + 1, h, hMap, ans);
+            merge(arr, l, mid, h, hMap, ans);
+        }
+    }
+
+    int[] findSurpasser(int[] arr, int n) {
+        HashMap<Integer, Integer> hMap = new HashMap<>();
+        int dup[] = Arrays.copyOf(arr, n);
+        int ans[] = new int[n];
+        for (int i = 0; i < dup.length; i++) {
+            hMap.put(arr[i], i);
+        }
+        mergeSort(arr, 0, n - 1, hMap, ans);
+
+        return ans;
+
+    }
+
+    public static void checkPalindromes(String str) {
+        if (str.length() == 0)
+            return;
+
+        System.out.println(str.charAt(0) + " Yes ");
+        if (str.length() == 1)
+            return;
+
+        int q = 103;
+        int d = 256;
+        int h = 1;
+        int j;
+        int firstH = str.charAt(0) % q;
+        int secondH = str.charAt(1) % q;
+
+        for (int i = 1; i < str.length(); i++) {
+            if (firstH == secondH) {
+                for (j = 0; j < i / 2; j++) {
+                    if (str.charAt(j) != str.charAt(i - j)) {
+                        break;
+                    }
+                }
+                System.out.println(str.charAt(i) + ((j == i / 2) ? " Yes " : " No "));
+            } else {
+                System.out.println(str.charAt(i) + " No ");
+            }
+            if (i != str.length() - 1) {
+                // if it is even
+                if (i % 2 == 0) {
+                    // then need to add char after first half at beginig
+                    h = (h * d) % q;
+                    firstH = (firstH + h * str.charAt(i / 2)) % q;
+
+                    // append chart at second
+                    secondH = (secondH * d + str.charAt(i + 1)) % q;
+                } else {
+                    secondH = (d * (secondH + q - str.charAt((i + 1) / 2) * h) % q + str.charAt(i + 1)) % q;
+                }
+            }
+        }
+    }
+
+    public static int largestSubArray2(int arr[]) {
+        int n = arr.length;
+        if (n == 0)
+            return 0;
+        Arrays.sort(arr);
+        int maxCount = 1;
+        int count = 1;
+
+        for (int i = 1; i < n; i++) {
+            if (arr[i - 1] + 1 == arr[i]) {
+                count++;
+                maxCount = Math.max(maxCount, count);
+            } else {
+                count = 1;
+            }
+        }
+
+        return maxCount;
+
+    }
+
+    public static int largestSubArray(int arr[]) {
+        int maxlen = 1;
+
+        for (int i = 0; i < arr.length - 1; i++) {
+            HashSet<Integer> hSet = new HashSet<>();
+            hSet.add(arr[i]);
+            int min = arr[i], max = arr[i];
+
+            for (int j = i + 1; j < arr.length; j++) {
+                if (hSet.contains(arr[j]))
+                    break;
+
+                min = Math.min(min, arr[j]);
+                max = Math.max(max, arr[j]);
+                hSet.add(arr[j]);
+
+                if ((max - min) == (j - i)) {
+                    maxlen = Math.max(maxlen, j - i + 1);
+                }
+            }
+        }
+        return maxlen;
+
+        
+
+    }
+
+    public static void main(String[] args) {
+        // // print(12);
+        // String str[] = { "acd", "dfg", "wyz", "yab", "mop",
+        // "bdfh", "a", "x", "moqs"
+        // };
+        // groupShiftedString(str, str.length);
+
+        // String txt = "aabaacaabaa";
+        // checkPalindromes(txt);
+
+        int arr[] = { 10, 12, 12, 10, 10, 11, 10 };
+        System.out.println("Length of the longest contiguous subarray is "
+                + largestSubArray(arr));
+    }
+}
+
+class MedianFinder {
+    PriorityQueue<Integer> minHeap;
+    PriorityQueue<Integer> maxHeap;
+
+    public MedianFinder() {
+        this.minHeap = new PriorityQueue<>();
+        this.maxHeap = new PriorityQueue<>();
+    }
+
+    public void addNum(int num) {
+        this.maxHeap.add(-1 * num);
+        this.minHeap.add(-1 * this.maxHeap.poll());
+
+        if (this.minHeap.size() > this.maxHeap.size())
+            this.maxHeap.add(-1 * this.minHeap.poll());
+
+    }
+
+    public double findMedian() {
+        if (this.minHeap.size() != this.maxHeap.size()) {
+            return -1 * this.maxHeap.peek();
+        } else {
+            // substracting as max heap contains elements multiple of -1
+            return (this.minHeap.peek() - this.maxHeap.peek()) / 2.00;
+        }
+    }
 }
