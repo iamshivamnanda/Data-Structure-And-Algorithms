@@ -232,6 +232,65 @@ public class ArraysSDEsheet {
 
     }
 
+    // Function to count the number of possible triangles.
+    static int findNumberOfTriangles(int arr[], int n) {
+        int count = 0;
+        Arrays.sort(arr);
+
+        // we will fix c and find a+b > c
+        // because in that case a+b > c , a +c > b , c + b > a
+
+        for (int c = n - 1; c >= 2; c--) {
+            int a = 0;
+            int b = c - 1;
+            while (a < b) {
+                if (arr[a] + arr[b] > arr[c]) {
+                    count += b - a;
+                    b--;
+                } else {
+                    a++;
+                }
+            }
+        }
+
+        return count;
+    }
+
+    public static boolean isCyclicUtil(int curr,ArrayList<ArrayList<Integer>> adj,
+    boolean recStack[], boolean visited[] ){
+        if(recStack[curr])
+            return true;
+        if(visited[curr])
+            return false;
+        
+        recStack[curr] = true;
+        visited[curr] = true;
+        
+        for(Integer edg: adj.get(curr)){
+            if(isCyclicUtil(edg, adj, recStack, visited))
+                return true;
+        }
+        
+        recStack[curr] = false;
+        return false;
+            
+    }
+    
+    
+    // Function to detect cycle in a directed graph.
+    public boolean isCyclic(int V, ArrayList<ArrayList<Integer>> adj) {
+       boolean recStack[] = new boolean[V];
+       boolean visited[] = new boolean[V];
+       
+       for(int i=0;i<V;i++){
+           if(isCyclicUtil(i,adj, recStack, visited))
+                return true;
+       }
+       
+       return false;
+    }
+    
+
     public static void main(String[] args) {
         ArrayList<Query> q = new ArrayList<Query>();
         q.add(new Query(0, 4));
