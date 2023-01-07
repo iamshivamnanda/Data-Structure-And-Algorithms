@@ -3,6 +3,7 @@ package Stack;
 // import java.util.*;
 import java.util.*;
 
+
 public class SDESHEET {
     static boolean isparutil(char c) {
         if (c == '[' || c == '{' || c == '(') {
@@ -118,6 +119,81 @@ public class SDESHEET {
         return pQueue.peek();
 
     }
+
+    class Node {
+        public int val;
+        public List<Node> children;
+    
+        public Node() {}
+    
+        public Node(int _val) {
+            val = _val;
+        }
+    
+        public Node(int _val, List<Node> _children) {
+            val = _val;
+            children = _children;
+        }
+    };
+
+    public List<Integer> preorder(Node root) {
+        List<Integer> res = new ArrayList<>();
+        if(root == null) return res;
+        ArrayDeque<Node> stack = new ArrayDeque<>();
+
+        stack.push(root);
+
+        while (!stack.isEmpty()) {
+            Node temp = stack.pop();
+            res.add(temp.val);
+
+            for (int i = temp.children.size() -1 ; i>=0 ; i--) {
+                stack.push(temp.children.get(i));
+            }
+        }
+
+        return res;
+
+    }
+
+
+    public int search(int[] nums, int target) {
+        int high = nums.length -1; int low = 0;
+
+        while (high >= low) {
+            int mid = (low + high)/2;
+            if(nums[mid] == target){
+                return mid;
+            }else if(nums[mid] > target){
+                high = mid -1;
+            }else{
+                low = mid +1;
+            }
+        }
+
+        return -1;
+    }
+
+    public int firstBadVersion(int n) {
+        int low = 0;
+        int high = n;
+
+        while(low+1 < high){
+            int mid = (low) + (high -low)/2;
+            if(isBadVersion(mid)){
+                high = mid;
+            }else{
+                low = mid;
+            }
+        }
+
+        if(isBadVersion(low)){
+            return low;
+        }
+
+        return high;
+    }
+
 
     public int romanToInt(String s) {
         HashMap<Character, Integer> map = new HashMap<>();
@@ -920,6 +996,151 @@ public class SDESHEET {
         }
 
         return ans;
+    }
+
+    public static String transformString(String str) {
+        Map<Character, Integer> map = new HashMap<>();
+        StringBuilder res = new StringBuilder();
+
+        for (int i = 0; i < str.length(); i++) {
+            char ch = str.charAt(i);
+            if (!map.containsKey(ch))
+                map.put(ch, i);
+
+            res.append(" ");
+        }
+
+        return str.toString();
+    }
+
+    public boolean isIsomorphic(String s, String t) {
+        if (s.length() != t.length())
+            return false;
+        HashMap<Character, Character> hashMap = new HashMap<>();
+
+        for (int i = 0; i < s.length(); i++) {
+            if (hashMap.containsKey(s.charAt(i))) {
+                if (hashMap.get(s.charAt(i)) != t.charAt(i))
+                    return false;
+            } else {
+                if (hashMap.containsValue(t.charAt(i)))
+                    return false;
+
+                hashMap.put(s.charAt(i), t.charAt(i));
+            }
+        }
+
+        return true;
+    }
+
+    public boolean isSubsequence(String s, String t) {
+        int i = 0;
+        int j = 0;
+
+        while (i < s.length() && j < t.length()) {
+            if (s.charAt(i) == t.charAt(j)) {
+                i++;
+                j++;
+            } else {
+                j++;
+            }
+        }
+
+        return i == s.length();
+    }
+
+    public class ListNode {
+        int val;
+        ListNode next;
+
+        ListNode() {
+        }
+
+        ListNode(int val) {
+            this.val = val;
+        }
+
+        ListNode(int val, ListNode next) {
+            this.val = val;
+            this.next = next;
+        }
+    }
+
+    class Solution {
+        public ListNode mergeTwoLists(ListNode list1, ListNode list2) {
+            ListNode head = new ListNode(-1);
+            ListNode curr = head;
+            while (list1 != null && list2 != null) {
+                if (list1.val < list2.val) {
+                    curr.next = list1;
+                    curr = curr.next;
+                    list1 = list1.next;
+                } else {
+                    curr.next = list2;
+                    curr = curr.next;
+                    list2 = list2.next;
+                }
+            }
+
+            if (list1 != null) {
+                curr.next = list1;
+            } else {
+                curr.next = list2;
+            }
+
+            return head.next;
+        }
+    }
+
+    public ListNode reverseList(ListNode head) {
+        ListNode prev = null;
+        ListNode next = null;
+        while (head != null) {
+            next = head.next;
+            head.next = prev;
+            prev = head;
+            head = next;
+        }
+        return prev;
+    }
+
+    public ListNode middleNode(ListNode head) {
+        ListNode second = head;
+        while (second != null && second.next != null) {
+            head = head.next;
+            second = second.next.next;
+        }
+        return head;
+    }
+
+    public ListNode detectCycle(ListNode head) {
+        HashMap<Integer,ListNode> hMap = new HashMap<>();
+        
+        while (head != null) {
+            if(hMap.containsKey(head.val)){
+                return hMap.get(head.val);
+            }
+            hMap.put(head.val, head);
+            head = head.next;
+        }
+
+        return null;
+    }
+
+    public int maxProfit(int[] prices) {
+        int max = Integer.MIN_VALUE;
+        int maxArr[] = new int[prices.length];
+        for (int i = 1; i < prices.length; i++) {
+            prices[i] = Math.max(max, prices[i]);
+            max = Math.max(max, prices[i]);
+        }
+
+        max = Integer.MIN_VALUE;
+        for (int i = 0; i < maxArr.length - 1 ; i++) {
+            max  = Math.max(max,maxArr[i-1] -  prices[i]);
+        }
+
+        return max;
     }
 }
 

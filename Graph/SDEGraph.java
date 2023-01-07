@@ -64,7 +64,6 @@ public class SDEGraph {
     public ArrayList<Integer> dfsOfGraph(int V, ArrayList<ArrayList<Integer>> adj) {
         boolean visited[] = new boolean[V];
         ArrayList<Integer> res = new ArrayList<>();
-
         for (int i = 0; i < V; i++) {
             if (!visited[i]) {
                 DFSUtilIter(V, i, adj, visited, res);
@@ -164,30 +163,176 @@ public class SDEGraph {
     }
 
     // public static void cloneGraphUtil(Node original, Node copy, Node visited[]) {
-    //     visited[original.val] = copy;
+    // visited[original.val] = copy;
 
-    //     for(Node n : original.neighbors){
-    //         if(visited[n.val] == null){
-    //             Node newNode = new Node(n.val);
-    //             copy.neighbors.add(newNode);
-    //             cloneGraphUtil(n, newNode, visited);
-    //         }else{
-    //             copy.neighbors.add(visited[n.val]);
-    //         }
-    //     }
+    // for(Node n : original.neighbors){
+    // if(visited[n.val] == null){
+    // Node newNode = new Node(n.val);
+    // copy.neighbors.add(newNode);
+    // cloneGraphUtil(n, newNode, visited);
+    // }else{
+    // copy.neighbors.add(visited[n.val]);
+    // }
+    // }
 
     // }
 
     // public Node cloneGraph(Node node) {
-    //     if(node == null) return node;
-    //     Node copy = new Node(node.val);
+    // if(node == null) return node;
+    // Node copy = new Node(node.val);
 
-    //     Node visited[] = new Node[101];
-    //     Arrays.fill(visited, null);
-    //     cloneGraphUtil(node, copy, visited);
-    //     return copy;
+    // Node visited[] = new Node[101];
+    // Arrays.fill(visited, null);
+    // cloneGraphUtil(node, copy, visited);
+    // return copy;
     // }
 
+    public static boolean isVowel(char ch) {
+        if (ch == 'a' || ch == 'e' || ch == 'i' || ch == 'o' || ch == 'u')
+            return true;
+
+        return false;
+    }
+
+    public static boolean halvesAreAlike(String s) {
+        if (s.length() == 1)
+            return false;
+
+        s = s.toLowerCase();
+        int mid = s.length() / 2;
+
+        int firstCOunt = 0;
+        int secondCount = 0;
+
+        for (int i = 0; i < mid; i++) {
+            if (isVowel(s.charAt(i))) {
+                firstCOunt++;
+            }
+        }
+
+        for (int i = mid; i < s.length(); i++) {
+            if (isVowel(s.charAt(i))) {
+                secondCount++;
+            }
+        }
+
+        return firstCOunt == secondCount;
+
+    }
+
+    public boolean closeStrings(String word1, String word2) {
+        if (word1.length() != word2.length())
+            return false;
+
+        int freq1[] = new int[26];
+        int freq2[] = new int[26];
+
+        for (int i = 0; i < word1.length(); i++) {
+            freq1[word1.charAt(i) - 'a']++;
+            freq2[word2.charAt(i) - 'a']++;
+        }
+
+        for (int i = 0; i < freq2.length; i++) {
+            if ((freq1[i] == 0 && freq2[i] != 0) || (freq2[i] == 0 && freq1[i] != 0))
+                return false;
+        }
+
+        Arrays.sort(freq1);
+        Arrays.sort(freq2);
+
+        for (int i = 0; i < freq2.length; i++) {
+            if (freq1[i] != freq2[i])
+                return false;
+        }
+
+        return true;
+
+    }
+
+    public static void makeConnectedUtil(int V, int index, ArrayList<ArrayList<Integer>> adj, boolean visited[]) {
+        ArrayDeque<Integer> stack = new ArrayDeque<>();
+        stack.push(index);
+
+        while (!stack.isEmpty()) {
+            int curr = stack.pop();
+            if (visited[curr]) {
+                continue;
+            }
+
+            visited[curr] = true;
+            ArrayList<Integer> list = adj.get(curr);
+            for (int i = list.size() - 1; i >= 0; i--) {
+                if (!visited[list.get(i)]) {
+                    stack.push(list.get(i));
+                }
+            }
+        }
+    }
+
+    public static void addEdge(ArrayList<ArrayList<Integer>> adj ,int i, int j) {
+        adj.get(i).add(j);
+        adj.get(j).add(i);
+    }
+
+    public int makeConnected(int n, int[][] connections) {
+        boolean visited[] = new boolean[n];
+        ArrayList<ArrayList<Integer>> adj = new ArrayList<>();
+        if(connections.length<n-1){          // if there are n nodes we need atleast n-1 connections so that all of them are connected
+            return -1;
+        }
+
+        for (int i = 0; i < n; i++) {
+            adj.add(new ArrayList<>());
+        }
+
+        for (int i = 0; i < connections.length; i++) {
+            addEdge(adj, connections[i][0], connections[i][1]);
+        }
+
+        int count = -1;
+        for (int i = 0; i < n; i++) {
+            if (!visited[i]) {
+                count++;
+                makeConnectedUtil(n, i, adj, visited);
+            }
+        }
+
+        return count;
+    }
+
+    public static int pivotIndex(int[] nums) {
+        int leftSum[] = new int[nums.length];   
+        int rightSum[] = new int[nums.length];   
+   
+       int sum = 0;
+       for(int i =0;i< nums.length;i++){
+           leftSum[i] = sum;
+           sum += nums[i];
+       }
+   
+       sum = 0;
+       for(int i =nums.length -1; i >= 0;i--){
+           rightSum[i] = sum;
+           sum += nums[i];
+       }
+       System.out.println(Arrays.toString(leftSum));
+       System.out.println(Arrays.toString(rightSum));
+   
+       for(int i =0;i< nums.length;i++){
+           if(leftSum[i] == rightSum[i])  return i;
+       }
+       return -1;
+       }
+
+
+    public static void main(String[] args) {
+        // String str = "tree";
+        // System.out.println(frequencySort(str));
+
+        int arr[] = {1,7,3,6,5,6};
+        System.out.println(pivotIndex(arr));
+
+    }
 }
 
 class Node2 {
@@ -198,6 +343,7 @@ class Node2 {
         val = 0;
         neighbors = new ArrayList<Node2>();
     }
+
     public Node2(int _val) {
         val = _val;
         neighbors = new ArrayList<Node2>();
@@ -207,6 +353,17 @@ class Node2 {
         val = _val;
         neighbors = _neighbors;
     }
+}
+
+class Pair{
+    char ch;
+    int count;
+    public Pair(char ch, int count) {
+        this.ch = ch;
+        this.count = count;
+    }
+
+    
 }
 
 class Node {
