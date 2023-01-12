@@ -3,7 +3,6 @@ package Stack;
 // import java.util.*;
 import java.util.*;
 
-
 public class SDESHEET {
     static boolean isparutil(char c) {
         if (c == '[' || c == '{' || c == '(') {
@@ -123,13 +122,14 @@ public class SDESHEET {
     class Node {
         public int val;
         public List<Node> children;
-    
-        public Node() {}
-    
+
+        public Node() {
+        }
+
         public Node(int _val) {
             val = _val;
         }
-    
+
         public Node(int _val, List<Node> _children) {
             val = _val;
             children = _children;
@@ -138,7 +138,8 @@ public class SDESHEET {
 
     public List<Integer> preorder(Node root) {
         List<Integer> res = new ArrayList<>();
-        if(root == null) return res;
+        if (root == null)
+            return res;
         ArrayDeque<Node> stack = new ArrayDeque<>();
 
         stack.push(root);
@@ -147,7 +148,7 @@ public class SDESHEET {
             Node temp = stack.pop();
             res.add(temp.val);
 
-            for (int i = temp.children.size() -1 ; i>=0 ; i--) {
+            for (int i = temp.children.size() - 1; i >= 0; i--) {
                 stack.push(temp.children.get(i));
             }
         }
@@ -156,18 +157,18 @@ public class SDESHEET {
 
     }
 
-
     public int search(int[] nums, int target) {
-        int high = nums.length -1; int low = 0;
+        int high = nums.length - 1;
+        int low = 0;
 
         while (high >= low) {
-            int mid = (low + high)/2;
-            if(nums[mid] == target){
+            int mid = (low + high) / 2;
+            if (nums[mid] == target) {
                 return mid;
-            }else if(nums[mid] > target){
-                high = mid -1;
-            }else{
-                low = mid +1;
+            } else if (nums[mid] > target) {
+                high = mid - 1;
+            } else {
+                low = mid + 1;
             }
         }
 
@@ -178,22 +179,21 @@ public class SDESHEET {
         int low = 0;
         int high = n;
 
-        while(low+1 < high){
-            int mid = (low) + (high -low)/2;
-            if(isBadVersion(mid)){
+        while (low + 1 < high) {
+            int mid = (low) + (high - low) / 2;
+            if (isBadVersion(mid)) {
                 high = mid;
-            }else{
+            } else {
                 low = mid;
             }
         }
 
-        if(isBadVersion(low)){
+        if (isBadVersion(low)) {
             return low;
         }
 
         return high;
     }
-
 
     public int romanToInt(String s) {
         HashMap<Character, Integer> map = new HashMap<>();
@@ -1114,10 +1114,10 @@ public class SDESHEET {
     }
 
     public ListNode detectCycle(ListNode head) {
-        HashMap<Integer,ListNode> hMap = new HashMap<>();
-        
+        HashMap<Integer, ListNode> hMap = new HashMap<>();
+
         while (head != null) {
-            if(hMap.containsKey(head.val)){
+            if (hMap.containsKey(head.val)) {
                 return hMap.get(head.val);
             }
             hMap.put(head.val, head);
@@ -1136,11 +1136,100 @@ public class SDESHEET {
         }
 
         max = Integer.MIN_VALUE;
-        for (int i = 0; i < maxArr.length - 1 ; i++) {
-            max  = Math.max(max,maxArr[i-1] -  prices[i]);
+        for (int i = 0; i < maxArr.length - 1; i++) {
+            max = Math.max(max, maxArr[i - 1] - prices[i]);
         }
 
         return max;
+    }
+
+    public void numIslandsUtils(int i, int j, char[][] grid) {
+        ArrayDeque<Pair> stack = new ArrayDeque<>();
+        stack.push(new Pair(i, j));
+
+        while (!stack.isEmpty()) {
+            Pair pair = stack.pop();
+            grid[pair.x][pair.y] = '0';
+
+            if (pair.x - 1 >= 0 && grid[pair.x - 1][pair.y] == '1')
+                stack.push(new Pair(pair.x - 1, pair.y));
+            if (pair.y - 1 >= 0 && grid[pair.x][pair.y - 1] == '1')
+                stack.push(new Pair(pair.x, pair.y - 1));
+            if (pair.x + 1 < grid.length && grid[pair.x + 1][pair.y] == '1')
+                stack.push(new Pair(pair.x + 1, pair.y));
+            if (pair.y + 1 < grid.length && grid[pair.x][pair.y + 1] == '1')
+                stack.push(new Pair(pair.x, pair.y + 1));
+        }
+
+    }
+
+    public int numIslands(char[][] grid) {
+        int noOfIslands = 0;
+        for (int i = 0; i < grid.length; i++) {
+            for (int j = 0; j < grid[0].length; j++) {
+                if (grid[i][j] == '1') {
+                    noOfIslands++;
+                    numIslandsUtils(i, j, grid);
+                }
+            }
+        }
+
+        return noOfIslands;
+    }
+
+    // Function to return list containing vertices in Topological order.
+    static int[] topoSort(int V, ArrayList<ArrayList<Integer>> adj) {
+        // add your code here
+        int inDegree[] = new int[V];
+        int res[] = new int[V];
+
+        for (ArrayList<Integer> edge : adj) {
+            for (Integer edj : edge) {
+                inDegree[edj]++;
+            }
+        }
+
+        ArrayDeque<Integer> qDeque = new ArrayDeque<>();
+
+        for (int i = 0; i < V; i++) {
+            if (inDegree[i] == 0) {
+                qDeque.add(i);
+            }
+        }
+
+        int count = 0;
+        while (!qDeque.isEmpty()) {
+            int u = qDeque.remove();
+            res[count++] = u;
+
+            for (Integer edj : adj.get(u)) {
+                inDegree[edj]--;
+                if (inDegree[edj] == 0)
+                    qDeque.add(edj);
+            }
+        }
+
+        return res;
+    }
+
+    public int fib(int n) {
+        int dp[] = new int[n];
+        dp[0] = 0;
+        dp[1] = 1;
+
+        return fibUtil(n, dp);
+    }
+
+    public int fibUtil(int n, int dp[]){
+        if(n == 0|| n== 1){
+            return dp[n];
+        }
+
+        if(dp[n] == 0){
+            dp[n] = fibUtil(n-1, dp) + fibUtil(n-2, dp);
+        }
+
+        return dp[n];
     }
 }
 

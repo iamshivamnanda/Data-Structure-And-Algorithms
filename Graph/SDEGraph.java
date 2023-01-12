@@ -269,7 +269,7 @@ public class SDEGraph {
         }
     }
 
-    public static void addEdge(ArrayList<ArrayList<Integer>> adj ,int i, int j) {
+    public static void addEdge(ArrayList<ArrayList<Integer>> adj, int i, int j) {
         adj.get(i).add(j);
         adj.get(j).add(i);
     }
@@ -277,7 +277,8 @@ public class SDEGraph {
     public int makeConnected(int n, int[][] connections) {
         boolean visited[] = new boolean[n];
         ArrayList<ArrayList<Integer>> adj = new ArrayList<>();
-        if(connections.length<n-1){          // if there are n nodes we need atleast n-1 connections so that all of them are connected
+        if (connections.length < n - 1) { // if there are n nodes we need atleast n-1 connections so that all of them
+                                          // are connected
             return -1;
         }
 
@@ -301,35 +302,78 @@ public class SDEGraph {
     }
 
     public static int pivotIndex(int[] nums) {
-        int leftSum[] = new int[nums.length];   
-        int rightSum[] = new int[nums.length];   
-   
-       int sum = 0;
-       for(int i =0;i< nums.length;i++){
-           leftSum[i] = sum;
-           sum += nums[i];
-       }
-   
-       sum = 0;
-       for(int i =nums.length -1; i >= 0;i--){
-           rightSum[i] = sum;
-           sum += nums[i];
-       }
-       System.out.println(Arrays.toString(leftSum));
-       System.out.println(Arrays.toString(rightSum));
-   
-       for(int i =0;i< nums.length;i++){
-           if(leftSum[i] == rightSum[i])  return i;
-       }
-       return -1;
-       }
+        int leftSum[] = new int[nums.length];
+        int rightSum[] = new int[nums.length];
 
+        int sum = 0;
+        for (int i = 0; i < nums.length; i++) {
+            leftSum[i] = sum;
+            sum += nums[i];
+        }
+
+        sum = 0;
+        for (int i = nums.length - 1; i >= 0; i--) {
+            rightSum[i] = sum;
+            sum += nums[i];
+        }
+        System.out.println(Arrays.toString(leftSum));
+        System.out.println(Arrays.toString(rightSum));
+
+        for (int i = 0; i < nums.length; i++) {
+            if (leftSum[i] == rightSum[i])
+                return i;
+        }
+        return -1;
+    }
+
+    public static ArrayList<ArrayList<Integer>> make_graph(int N, int[][] prerequisites) {
+        ArrayList<ArrayList<Integer>> paths = new ArrayList<>();
+        for (int i = 0; i < N; i++) {
+            paths.add(new ArrayList<>());
+        }
+
+        for (int i = 0; i < prerequisites.length; i++) {
+            paths.get(prerequisites[i][1]).add(prerequisites[i][0]);
+        }
+
+        return paths;
+    }
+
+    public static boolean dfs_cycle(int node, ArrayList<ArrayList<Integer>> paths,boolean onPath[], boolean visited[]) {
+        if(visited[node]){
+            return false;
+        }
+
+        onPath[node] = visited[node] = true;
+        
+        for(Integer edj: paths.get(node)){
+            if(onPath[edj] || dfs_cycle(edj, paths, onPath, visited)){
+                return true;
+            }
+        }
+        onPath[node] = false;
+
+        return false;
+    }
+
+    public boolean isPossible(int N, int[][] prerequisites) {
+        ArrayList<ArrayList<Integer>> paths = make_graph(N, prerequisites);
+
+        boolean onPath[] = new boolean[N];
+        boolean visited[] = new boolean[N];
+
+        for (int i = 0; i < N; i++) {
+            if(!visited[i] && dfs_cycle(i, paths, onPath, visited)  ) return false;
+        }
+
+        return true;
+    }
 
     public static void main(String[] args) {
         // String str = "tree";
         // System.out.println(frequencySort(str));
 
-        int arr[] = {1,7,3,6,5,6};
+        int arr[] = { 1, 7, 3, 6, 5, 6 };
         System.out.println(pivotIndex(arr));
 
     }
@@ -355,15 +399,15 @@ class Node2 {
     }
 }
 
-class Pair{
+class Pair {
     char ch;
     int count;
+
     public Pair(char ch, int count) {
         this.ch = ch;
         this.count = count;
     }
 
-    
 }
 
 class Node {
