@@ -42,6 +42,7 @@ public class Matrix {
         }
 
         return arr;
+
     }
 
     public static void printMatrix(char arr[][]) {

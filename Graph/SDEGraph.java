@@ -339,15 +339,16 @@ public class SDEGraph {
         return paths;
     }
 
-    public static boolean dfs_cycle(int node, ArrayList<ArrayList<Integer>> paths,boolean onPath[], boolean visited[]) {
-        if(visited[node]){
+    public static boolean dfs_cycle(int node, ArrayList<ArrayList<Integer>> paths, boolean onPath[],
+            boolean visited[]) {
+        if (visited[node]) {
             return false;
         }
 
         onPath[node] = visited[node] = true;
-        
-        for(Integer edj: paths.get(node)){
-            if(onPath[edj] || dfs_cycle(edj, paths, onPath, visited)){
+
+        for (Integer edj : paths.get(node)) {
+            if (onPath[edj] || dfs_cycle(edj, paths, onPath, visited)) {
                 return true;
             }
         }
@@ -363,7 +364,8 @@ public class SDEGraph {
         boolean visited[] = new boolean[N];
 
         for (int i = 0; i < N; i++) {
-            if(!visited[i] && dfs_cycle(i, paths, onPath, visited)  ) return false;
+            if (!visited[i] && dfs_cycle(i, paths, onPath, visited))
+                return false;
         }
 
         return true;
@@ -376,6 +378,173 @@ public class SDEGraph {
         int arr[] = { 1, 7, 3, 6, 5, 6 };
         System.out.println(pivotIndex(arr));
 
+    }
+
+    public int isNegativeWeightCycle(int n, int[][] edges) {
+        int dist[] = new int[n];
+        Arrays.fill(dist, Integer.MAX_VALUE);
+
+        dist[0] = 0;
+
+        for (int i = 0; i < n - 1; i++) {
+            for (int j = 0; j < edges.length; j++) {
+                int u = edges[j][0];
+                int v = edges[j][1];
+                int weight = edges[j][2];
+
+                if (dist[u] != Integer.MAX_VALUE && dist[u] + weight < dist[v]) {
+                    dist[v] = dist[u] + weight;
+                }
+            }
+        }
+
+        for (int j = 0; j < edges.length; j++) {
+            int u = edges[j][0];
+            int v = edges[j][1];
+            int weight = edges[j][2];
+
+            if (dist[u] != Integer.MAX_VALUE && dist[u] + weight < dist[v]) {
+                return 1;
+            }
+        }
+
+        return 0;
+    }
+
+    public void shortest_distance(int[][] matrix) {
+        for (int j = 0; j < matrix.length; j++) {
+            for (int i = 0; i < matrix.length; i++) {
+                for (int k = 0; k < matrix.length; k++) {
+                    if(matrix[i][j] == -1  || matrix[j][k] == -1) continue;
+                    if(matrix[i][k] == -1 ||  ( matrix[i][j] + matrix[j][k] < matrix[i][k]) ){
+                        matrix[i][k] = matrix[i][j] + matrix[j][k];
+                    }
+                }
+            }
+        }
+    }
+
+    public static ArrayList<ArrayList<Pair>> makeAdjEdged(int V, int edges[][]) {
+        ArrayList<ArrayList<Pair>> adList = new ArrayList<>();
+
+        for (int i = 0; i < V; i++) {
+            adList.add(new ArrayList<>());
+        }
+
+        for (int i = 0; i < edges.length; i++) {
+            adList.get(edges[i][0]).add(new Pair(edges[i][1], edges[i][2]));
+            adList.get(edges[i][1]).add(new Pair(edges[i][0], edges[i][2]));
+        }
+
+        return adList;
+    }
+
+    static int spanningTree(int V, int E, int edges[][]) {
+        ArrayList<ArrayList<Pair>> adList = makeAdjEdged(V, edges);
+        PriorityQueue<Pair> minHeap = new PriorityQueue<>((Pair p1, Pair p2) -> p1.y - p2.y);
+        boolean visited[] = new boolean[V];
+        int ans = 0;
+        minHeap.add(new Pair(0, 0));
+
+        while (!minHeap.isEmpty()) {
+            Pair curr = minHeap.remove();
+            // System.out.println(curr);
+            if (visited[curr.x])
+                continue;
+            ans += curr.y;
+            visited[curr.x] = true;
+
+            for (Pair pair : adList.get(curr.x)) {
+                if (!visited[pair.x]) {
+                    minHeap.add(new Pair(pair.x, pair.y));
+                }
+            }
+        }
+        return ans;
+    }
+
+    public static int getCoordinateValue(int[][] board, int num) {
+        int n = board.length;
+        int r = (num - 1)/ n;
+        int x = n - r - 1;
+        
+        int y = r % 2 == 0 ? num - 1 - r * n : n + r * n - num;
+        return board[x][y];
+    }
+
+    public int snakesAndLadders(int[][] board) {
+        int n = board.length;
+        boolean[] visited = new boolean[n* n + 1];
+        Queue<Integer> queue = new LinkedList<>();
+        queue.offer(1);
+        for(int move = 0;!queue.isEmpty() ;move++){
+            for (int size = queue.size(); size > 0; size--) {   
+                int num = queue.poll();
+                if(visited[num]) continue;
+                visited[num] = true;
+
+                if(num == n*n) return move;
+
+                for (int i = 1; i <= 6  && num + i <= n * n; i++) {
+                    int next = num + i;
+                    int value = getCoordinateValue(board, next);
+                    if (value > 0) next  = value;
+                    if(!visited[next]) queue.offer(next);
+                }
+            }
+        }
+        return -1;
+    }
+
+    public static void dfs(int V, ArrayList<ArrayList<Integer>> adj, boolean[] visited, Stack<Integer> stack) {
+        visited[V] = true;
+        for (Integer u : adj.get(V)) {
+            if(!visited[u]) dfs(u, adj, visited, stack);
+        }
+
+        stack.push(V);
+    }
+    public static void revdfs(int V, ArrayList<ArrayList<Integer>> adj, boolean[] visited) {
+        visited[V] = true;
+        for (Integer u : adj.get(V)) {
+            if(!visited[u]) revdfs(u, adj, visited);
+        }
+    }
+
+     //Function to find number of strongly connected components in the graph.
+    public int kosaraju(int V, ArrayList<ArrayList<Integer>> adj)
+    {
+        // first we need to find sorting execution using topological sort dfs ( in a stack)
+        // then we will do transpose of edges
+        // then we will traverse dfs in topological sort and increment the count and return the count
+
+        Stack<Integer> stack = new Stack<>();
+        boolean[] visited = new boolean[V];
+        for (int i = 0; i < V; i++) {
+            if(!visited[i]) dfs(i, adj, visited, stack);
+        }
+        ArrayList<ArrayList<Integer>> transpose_adj = new ArrayList<>();
+        for (int i = 0; i < V; i++) {
+            transpose_adj.add(new ArrayList<>());
+        }
+
+        for (int i = 0; i < adj.size(); i++) {
+            visited[i] = false;
+            for (Integer u : adj.get(i)) {
+                transpose_adj.get(u).add(i);
+            }
+        }
+
+        int count = 0;
+        while (!stack.isEmpty()) {
+            int u = stack.pop();
+            if(!visited[u]){
+                count++;
+                revdfs(u, transpose_adj, visited);
+            }
+        }
+
+        return count;
     }
 }
 
@@ -399,13 +568,29 @@ class Node2 {
     }
 }
 
-class Pair {
-    char ch;
-    int count;
+// class Pair {
+// char ch;
+// int count;
 
-    public Pair(char ch, int count) {
-        this.ch = ch;
-        this.count = count;
+// public Pair(char ch, int count) {
+// this.ch = ch;
+// this.count = count;
+// }
+
+// }
+
+class Pair {
+    int x;
+    int y;
+
+    public Pair(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
+    @Override
+    public String toString() {
+        return "Pair [x=" + x + ", y=" + y + "]";
     }
 
 }
