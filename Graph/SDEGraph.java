@@ -515,7 +515,7 @@ public class SDEGraph {
         visited[V] = true;
         for (Integer u : adj.get(V)) {
             if (!visited[u])
-                revdfs(, adj, visited);
+                revdfs(u, adj, visited);
         }
     }
 
@@ -580,18 +580,18 @@ public class SDEGraph {
 
     public static void numIslandsBfs(char[][] grid, int r, int c) {
         grid[r][c] = '0';
-        int rows[] = {-1,1,0,0,-1,-1,1,1};
-        int cols[] = {0,0,-1,1,-1,1,1,-1};
+        int rows[] = { -1, 1, 0, 0, -1, -1, 1, 1 };
+        int cols[] = { 0, 0, -1, 1, -1, 1, 1, -1 };
         ArrayDeque<Pair> queue = new ArrayDeque<>();
         queue.add(new Pair(r, c));
 
         while (!queue.isEmpty()) {
-            Pair pair =  queue.pop();
+            Pair pair = queue.pop();
 
             for (int k = 0; k < rows.length; k++) {
-                int row  = pair.x + rows[k];
-                int col  = pair.y + cols[k];
-                isSafe(grid, row, col){
+                int row = pair.x + rows[k];
+                int col = pair.y + cols[k];
+                if (isSafe(grid, row, col)) {
                     grid[row][col] = '0';
                     queue.add(new Pair(row, col));
                 }
@@ -1060,39 +1060,168 @@ public class SDEGraph {
 
         for (int i = 0; i < V; i++) {
             if (!visited[i]) {
-                topoSortDfsUtil(i, adj, stack, visited);    
+                topoSortDfsUtil(i, adj, stack, visited);
             }
         }
         int res[] = new int[V];
-        int i = 0 ;
+        int i = 0;
         while (!stack.isEmpty()) {
             res[i++] = stack.pop();
         }
 
         return res;
     }
+
+    public static void makeGraphUtil(ArrayList<ArrayList<Integer>> prerequisites, ArrayList<ArrayList<Integer>> adjList,
+            int n) {
+        for (int i = 0; i < n; i++) {
+            adjList.add(new ArrayList<>());
+        }
+
+        for (ArrayList<Integer> arrayList : prerequisites) {
+            adjList.get(arrayList.get(1)).add(arrayList.get(0));
+        }
+    }
+
+    public static void findOrderTopoSortUtil(int node, boolean visited[], ArrayList<ArrayList<Integer>> adList,
+            Stack<Integer> stack) {
+        visited[node] = true;
+        for (Integer edjNode : adList.get(node)) {
+            if (!visited[edjNode]) {
+                findOrderTopoSortUtil(edjNode, visited, adList, stack);
+            }
+        }
+        stack.push(node);
+    }
+
+    // doesn't work correctly
+    static int[] findOrde2r(int n, int m, ArrayList<ArrayList<Integer>> prerequisites) {
+        // first to make it into graph
+
+        ArrayList<ArrayList<Integer>> adList = new ArrayList<>();
+        makeGraphUtil(prerequisites, adList, n);
+
+        boolean[] visited = new boolean[n];
+        Stack<Integer> stack = new Stack<>();
+
+        // then call the util by passing stack to get toposort
+        for (int i = 0; i < n; i++) {
+            if (!visited[i]) {
+                findOrderTopoSortUtil(i, visited, adList, stack);
+            }
+        }
+
+        int[] res = new int[n];
+        if (stack.size() != n) {
+            return res;
+        }
+
+        int i = 0;
+        while (!stack.isEmpty()) {
+            res[i++] = stack.pop();
+        }
+
+        System.out.println(Arrays.toString(res));
+        return res;
+    }
+
+    static int[] findOrder(int n, int m, ArrayList<ArrayList<Integer>> prerequisites) {
+        int[] indegree = new int[n];
+
+        ArrayList<ArrayList<Integer>> adjList = new ArrayList<>();
+
+        for (int i = 0; i < n; i++) {
+            adjList.add(new ArrayList<>());
+        }
+
+        for (ArrayList<Integer> arrayList : prerequisites) {
+            adjList.get(arrayList.get(1)).add(arrayList.get(0));
+            indegree[arrayList.get(1)]++;
+        }
+
+        ArrayDeque<Integer> arrayDeque = new ArrayDeque<>();
+        int[] res = new int[n];
+
+        for (int i = 0; i < n; i++) {
+            if (indegree[i] == 0) {
+                arrayDeque.add(i);
+            }
+        }
+
+        int index = 0;
+
+        while (!arrayDeque.isEmpty()) {
+            int node = arrayDeque.remove();
+
+            res[index++] = node;
+
+            for (Integer adjNode : adjList.get(node)) {
+                indegree[adjNode]--;
+                if (indegree[adjNode] == 0)
+                    arrayDeque.add(adjNode);
+            }
+        }
+        return index == n ? res : new int[0];
+    }
+
+    public String findOrder(String[] dict, int N, int K) {
+        // algo is that here order can be made from toposort
+        // make a adj list
+        // find the toposort
+        // make the result string and return
+
+        // baa b d a c
+        // abcd
+        // abca
+        // cab
+        // cada
+
+        ArrayList<ArrayList<Integer>> adjList = new ArrayList<>();
+        int indegree[] = new int[K];
+
+        for (int i = 0; i < K; i++) {
+            adjList.add(new ArrayList<>());
+        }
+
+        // make a list from words
+        for (int start = 0; start < N - 1; start++) {
+            String first = dict[start];
+            String second = dict[start + 1];
+            for (int i = 0; i < Math.min(first.length(), second.length()); i++) {
+                if (first.charAt(i) != second.charAt(i)) {
+                    adjList.get(first.charAt(i) - 'a').add(second.charAt(i) - 'a');
+                    indegree[second.charAt(i) - 'a']++;
+                    break;
+                }
+            }
+        }
+
+        ArrayDeque<Integer> queue = new ArrayDeque<>();
+
+        for (int i = 0; i < K; i++) {
+            if (indegree[i] == 0) {
+                queue.add(i);
+            }
+        }
+        String res = "";
+
+        while (!queue.isEmpty()) {
+            int val = queue.remove();
+            res += (char) (val + (int) ('a'));
+
+            for (Integer adjEdge : adjList.get(val)) {
+                indegree[adjEdge]--;
+                if (indegree[adjEdge] == 0) {
+                    queue.add(adjEdge);
+                }
+            }
+        }
+        // System.out.println(res);
+        return res;
+
+    }
+
 }
-
-class Node2 {
-    public int val;
-    public List<Node2> neighbors;
-
-    public Node2() {
-        val = 0;
-        neighbors = new ArrayList<Node2>();
-    }
-
-    public Node2(int _val) {
-        val = _val;
-        neighbors = new ArrayList<Node2>();
-    }
-
-    public Node2(int _val, ArrayList<Node2> _neighbors) {
-        val = _val;
-        neighbors = _neighbors;
-    }
-}
-
 // class Pair {
 // char ch;
 // int count;
